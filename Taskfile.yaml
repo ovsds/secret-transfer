@@ -1,0 +1,321 @@
+version: 3
+
+silent: true
+
+vars:
+  NENV: "node_modules"
+  VENV: ".venv"
+
+  SOURCE_FOLDERS: secret_transfer tests
+  TOML_FILES: pyproject.toml poetry.toml
+  PYTHON_FILES:
+    sh: find {{.SOURCE_FOLDERS}} -name '*.py' | tr '\n' ' '
+
+  PYTHON_VERSIONS: 3.9 3.10 3.11 3.12
+
+tasks:
+  _prettier:
+    internal: true
+    cmds:
+      - "{{.NENV}}/.bin/prettier {{.COMMAND}}"
+
+  _pyright:
+    internal: true
+    cmds:
+      - "{{.NENV}}/.bin/pyright {{.COMMAND}}"
+
+  _with_nvm:
+    internal: true
+    cmds:
+      - "source ${HOME}/.nvm/nvm.sh && nvm use && {{.COMMAND}}"
+
+  _python:
+    internal: true
+    cmds:
+      - "poetry run python {{.COMMAND}}"
+
+  _toml_sort:
+    internal: true
+    cmds:
+      - "poetry run toml-sort {{.COMMAND}}"
+
+  _sort_all:
+    internal: true
+    cmds:
+      - cmd: "poetry run sort-all {{.COMMAND}} || [ {{.IGNORE_ERRORS}} = 'true' ]"
+    vars:
+      IGNORE_ERRORS: '{{.IGNORE_ERRORS | default "true"}}'
+
+  init:
+    desc: Initialize project environment
+    vars:
+      POETRY_TARGET_VERSION:
+        sh: cat .poetry-version
+    cmds:
+      - echo 'Installing node version...'
+      - task: _with_nvm
+        vars: { COMMAND: "nvm install" }
+      - echo ''
+
+      - echo 'Installing node dependencies...'
+      - task: _with_nvm
+        vars: { COMMAND: "npm install" }
+      - echo ''
+
+      - echo 'Installing husky pre-commit...'
+      - task: _with_nvm
+        vars: { COMMAND: "npm run prepare-husky" }
+      - echo ''
+
+      - echo 'Installing python version...'
+      - pyenv install --skip-existing
+      - echo ''
+
+      - echo 'Installing poetry version...'
+      - poetry self update {{.POETRY_TARGET_VERSION}}
+      - echo ''
+
+      - echo 'Installing python dependencies...'
+      - poetry install
+
+  lint:
+    desc: Lint project
+    cmds:
+      - echo 'Running prettier checks...'
+      - task: _prettier
+        vars: { COMMAND: "--check ." }
+      - echo ''
+
+      - echo 'Running poetry checks...'
+      - poetry check --lock
+      - echo ''
+
+      - echo 'Running black checks...'
+      - task: _python
+        vars: { COMMAND: "-m black --check ." }
+
+      - echo 'Running toml-sort checks...'
+      - task: _toml_sort
+        vars: { COMMAND: "--check {{.TOML_FILES}}" }
+      - echo ''
+
+      - echo 'Running sort-all autofixes...'
+      - task: _sort_all
+        vars:
+          COMMAND: "{{.PYTHON_FILES}}"
+          IGNORE_ERRORS: "false"
+      - echo ''
+
+      - echo 'Running ruff checks...'
+      - task: _python
+        vars: { COMMAND: "-m ruff check {{.SOURCE_FOLDERS}}" }
+      - echo ''
+
+      - echo 'Running pyright checks...'
+      - task: _pyright
+
+  lint-fix:
+    desc: Lint fix project
+    cmds:
+      - echo 'Running prettier fixes...'
+      - task: _prettier
+        vars: { COMMAND: "--write ." }
+      - echo ''
+
+      - echo 'Running poetry checks...'
+      - poetry lock --no-update
+      - echo ''
+
+      - echo 'Running black autofixes...'
+      - task: _python
+        vars: { COMMAND: "-m black --safe ." }
+      - echo ''
+
+      - echo 'Running toml-sort autofixes...'
+      - task: _toml_sort
+        vars: { COMMAND: "--in-place {{.TOML_FILES}}" }
+      - echo ''
+
+      - echo 'Running sort-all autofixes...'
+      - task: _sort_all
+        vars: { COMMAND: "{{.PYTHON_FILES}}" }
+      - echo ''
+
+      - echo 'Running ruff fixes...'
+      - task: _python
+        vars: { COMMAND: "-m ruff check --fix {{.SOURCE_FOLDERS}}" }
+      - echo ''
+
+      - echo 'Running pyright checks...'
+      - task: _pyright
+
+  test:
+    desc: Test project
+    cmds:
+      - task: _python
+        vars: { COMMAND: "-m pytest tests" }
+
+  test-unit:
+    desc: Test unit tests
+    cmds:
+      - task: _python
+        vars: { COMMAND: "-m pytest tests/unit" }
+
+  test-integration:
+    desc: Test unit tests
+    cmds:
+      - task: _python
+        vars: { COMMAND: "-m pytest tests/integration" }
+
+  test-external:
+    desc: Test external tests
+    cmds:
+      - task: _python
+        vars: { COMMAND: "-m pytest tests/external" }
+
+  test-e2e:
+    desc: Test end-to-end tests
+    cmds:
+      - task: _python
+        vars: { COMMAND: "-m pytest -vvv tests/e2e" }
+
+  test-coverage:
+    desc: Collect test coverage data
+    cmds:
+      - task: _python
+        vars: { COMMAND: "-m coverage run -m pytest tests/unit tests/integration" }
+
+  test-coverage-report:
+    desc: Show coverage report in console
+    cmds:
+      - task: _python
+        vars: { COMMAND: "-m coverage report --skip-covered --show-missing" }
+
+  test-coverage-html:
+    desc: Prepare and show coverage report in browser
+    cmds:
+      - task: _python
+        vars: { COMMAND: "-m coverage html" }
+      - task: _python
+        vars: { COMMAND: "-m webbrowser -t {{.coverage_html}}" }
+    vars:
+      coverage_html:
+        sh: "[ $(uname) = 'Darwin' ] && echo 'file://$(pwd)/htmlcov/index.html' || echo 'htmlcov/index.html'"
+
+  check-version:
+    desc: Run lints and checks for version
+    requires:
+      vars:
+        - PYTHON_VERSION
+    cmds:
+      - echo "Setting pyenv version to {{.PYTHON_VERSION}}..."
+      - pyenv install --skip-existing {{.PYTHON_VERSION}}
+      - defer: pyenv local {{.original_python_version}}
+      - pyenv local {{.PYTHON_VERSION}}
+      - echo ''
+
+      - task: _clean_python
+      - task: init
+      - task: lint
+      - task: test
+    vars:
+      original_python_version:
+        sh: pyenv local
+
+  check-all-versions:
+    desc: Run lints and checks for all versions
+    requires:
+      vars:
+        - PYTHON_VERSIONS
+    cmds:
+      - for: { var: PYTHON_VERSIONS }
+        task: check-version
+        vars: { PYTHON_VERSION: "{{.ITEM}}" }
+      - task: _clean_python
+      - task: init
+
+  _clean_python:
+    internal: true
+    cmds:
+      - echo 'Cleaning python dependencies...'
+      - rm -rf {{.VENV}}
+      - echo ''
+
+  clean:
+    desc: Clean project environment
+    cmds:
+      - echo 'Cleaning node dependencies...'
+      - rm -rf {{.NENV}}
+      - echo ''
+
+      - task: _clean_python
+
+      - echo 'Cleaning dist packages...'
+      - rm -rf dist
+      - echo ''
+
+      - echo 'Cleaning pytest cache...'
+      - rm -rf .pytest_cache
+      - echo ''
+
+      - echo 'Cleaning ruff cache...'
+      - rm -rf .ruff_cache
+      - echo ''
+
+      - echo 'Cleaning coverage data...'
+      - rm -rf .coverage htmlcov
+      - echo ''
+
+  dependencies-update:
+    desc: Update dependencies
+    cmds:
+      - echo 'Updating node dependencies...'
+      - task: _with_nvm
+        vars: { COMMAND: "npm update" }
+
+      - echo 'Updating python dependencies...'
+      - poetry update
+
+  dependencies-check:
+    desc: Check dependencies
+    cmds:
+      - echo 'Checking node dependencies...'
+      - task: _with_nvm
+        vars: { COMMAND: "npm outdated" }
+      - task: _with_nvm
+        vars: { COMMAND: "npm audit" }
+
+      - echo 'Checking python dependencies...'
+      - poetry show --outdated
+
+  # CI tasks
+
+  ci-init:
+    desc: Initialize project environment (CI-specific)
+    cmds:
+      - echo 'Installing node dependencies...'
+      - npm clean-install
+      - echo ''
+
+      - echo 'Installing python dependencies...'
+      - poetry install
+
+  ci-login-pypi-publish:
+    desc: Login to PyPI (CI-specific)
+    requires:
+      envs: [PYPI_TOKEN]
+    cmds:
+      - echo 'Logging in to PyPI...'
+      - poetry config pypi-token.pypi $PYPI_TOKEN
+
+  ci-package-build:
+    desc: Build package (CI-specific)
+    cmds:
+      - echo 'Building package...'
+      - poetry build --no-interaction
+
+  ci-package-publish:
+    desc: Publish package (CI-specific)
+    cmds:
+      - echo 'Uploading package...'
+      - poetry publish --no-interaction
