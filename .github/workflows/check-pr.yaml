@@ -1,0 +1,68 @@
+name: Check PR
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+jobs:
+  check-pr-specific-python-version:
+    name: Check PR for python ${{ matrix.python_version }}
+    runs-on: ubuntu-22.04
+
+    permissions:
+      contents: read
+
+    strategy:
+      matrix:
+        python_version: ["3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Install Task
+        uses: arduino/setup-task@v1
+        with:
+          version: 3.33.1
+
+      - name: Set up Python ${{ matrix.python_version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python_version }}
+
+      - name: Install and configure Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.7.1
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: task ci-init
+
+      - name: Lint PR
+        run: task lint
+
+      - name: Test Unit
+        run: task test-unit
+
+      - name: Test Integration
+        run: task test-integration
+
+      - name: Test E2E
+        run: task test-e2e
+
+  results:
+    name: Final Results
+    runs-on: ubuntu-22.04
+
+    needs: [check-pr-specific-python-version]
+    if: ${{ always() }}
+
+    steps:
+      - run: |
+          result="${{ needs.check-pr-specific-python-version.result }}"
+          [[ $result != "success" && $result != "skipped" ]] && exit 1
+
+          echo "All checks passed!"

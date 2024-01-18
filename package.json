@@ -1,0 +1,33 @@
+{
+  "private": true,
+  "name": "docker-contrib",
+  "devDependencies": {
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
+    "dockerfilelint": "1.8.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.1.1",
+    "pyright": "^1.1.299"
+  },
+  "hooks": {
+    "pre-commit": "lint-staged",
+    "commit-msg": "commitlint"
+  },
+  "lint-staged": {
+    "*.{md,yaml,json,js}": [
+      "prettier --check"
+    ],
+    "*.py": [
+      ".venv/bin/python -m black --check",
+      ".venv/bin/python -m ruff",
+      "node_modules/.bin/pyright"
+    ],
+    "*.toml": [
+      ".venv/bin/toml-sort --check"
+    ]
+  },
+  "scripts": {
+    "prepare-husky": "husky install"
+  }
+}
