@@ -20,6 +20,9 @@ jobs:
         python_version: ["3.9", "3.10", "3.11", "3.12"]
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Install Task
         uses: arduino/setup-task@v1
         with:
@@ -34,9 +37,6 @@ jobs:
         uses: snok/install-poetry@v1
         with:
           version: 1.7.1
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
 
       - name: Install dependencies
         run: task ci-init

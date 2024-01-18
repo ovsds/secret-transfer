@@ -26,7 +26,7 @@ license = "MIT"
 name = "secret-transfer"
 readme = "README.md"
 repository = "https://github.com/ovsds/secret-transfer"
-version = "0.1.0"
+version = "0.2.0"
 
 [tool.poetry.dependencies]
 click = "^8.1.3"
