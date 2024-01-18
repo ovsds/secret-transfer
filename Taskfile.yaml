@@ -300,14 +300,6 @@ tasks:
       - echo 'Installing python dependencies...'
       - poetry install
 
-  ci-login-pypi-publish:
-    desc: Login to PyPI (CI-specific)
-    requires:
-      envs: [PYPI_TOKEN]
-    cmds:
-      - echo 'Logging in to PyPI...'
-      - poetry config pypi-token.pypi $PYPI_TOKEN
-
   ci-package-build:
     desc: Build package (CI-specific)
     cmds:

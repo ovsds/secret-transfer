@@ -1,0 +1,85 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  get_versions:
+    name: Get local and remote versions
+    runs-on: ubuntu-22.04
+
+    permissions:
+      contents: read
+
+    outputs:
+      local_version: ${{ steps.get_local_version.outputs.local_version }}
+      remote_version: ${{ steps.get_remote_version.outputs.remote_version }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install and configure Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.7.1
+
+      - name: Get local version
+        id: get_local_version
+        run: echo "local_version=$(poetry version --short)" >> $GITHUB_OUTPUT
+
+      - name: Get remote version
+        id: get_remote_version
+        run: |
+          remote_version=$(curl https://pypi.org/pypi/secret-transfer/json | jq -r '.info.version' || echo "0.0.0")
+          echo "remote_version=$remote_version" >> $GITHUB_OUTPUT
+
+  release:
+    name: Release
+    runs-on: ubuntu-22.04
+
+    needs: [get_versions]
+    if: ${{ needs.get_versions.outputs.local_version != needs.get_versions.outputs.remote_version }}
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Task
+        uses: arduino/setup-task@v1
+        with:
+          version: 3.33.1
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+
+      - name: Install and configure Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.7.1
+
+      - name: Install dependencies
+        run: task ci-init
+
+      - name: Build
+        run: task ci-package-build
+
+      - name: Publish
+        run: task ci-package-publish
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ github.token }}
+          tag: ${{ needs.get_versions.outputs.local_version }}
+          artifacts: "dist/*"
+          generateReleaseNotes: true
+          skipIfReleaseExists: true
