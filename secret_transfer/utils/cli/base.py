@@ -12,8 +12,8 @@ class RunError(Exception):
     def __str__(self) -> str:
         return (
             f"Command '{self.command}' failed with exit code {self.exit_code}\n"
-            f"STDOUT:\n{self.stdout}\n"
-            f"STDERR:\n{self.stderr}\n"
+            f"STDOUT: {self.stdout}\n"
+            f"STDERR: {self.stderr}"
         )
 
 
@@ -23,8 +23,8 @@ def run(command: str, encoding: str = "utf-8") -> str:
     except subprocess.CalledProcessError as exc:
         raise RunError(
             exit_code=exc.returncode,
-            stdout=exc.stdout.decode(encoding),
-            stderr=exc.stderr.decode(encoding),
+            stdout=exc.stdout.decode(encoding).strip("\n"),
+            stderr=exc.stderr.decode(encoding).strip("\n"),
             command=command,
         ) from exc
 
