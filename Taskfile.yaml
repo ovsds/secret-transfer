@@ -6,7 +6,7 @@ vars:
   NENV: "node_modules"
   VENV: ".venv"
 
-  SOURCE_FOLDERS: secret_transfer tests
+  SOURCE_FOLDERS: secret_transfer tests examples
   TOML_FILES: pyproject.toml poetry.toml
   PYTHON_FILES:
     sh: find {{.SOURCE_FOLDERS}} -name '*.py' | tr '\n' ' '
