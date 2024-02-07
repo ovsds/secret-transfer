@@ -1,0 +1,25 @@
+version: 3
+
+silent: true
+
+tasks:
+  init:
+    desc: Installing package in venv
+    cmds:
+      - python -m venv .venv
+      - .venv/bin/python -m pip install secret-transfer
+
+  clean:
+    desc: Cleaning venv
+    cmds:
+      - rm -rf .venv
+
+  secrets-run:
+    desc: Run all transfers
+    cmds:
+      - .venv/bin/secret-transfer run -f secrets.yaml
+
+  secrets-clean:
+    desc: Clean all transfers
+    cmds:
+      - .venv/bin/secret-transfer clean -f secrets.yaml
