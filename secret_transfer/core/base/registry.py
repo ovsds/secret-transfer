@@ -16,7 +16,7 @@ class BaseRegistry(type, typing.Generic[protocol.ResourceType], metaclass=Regist
     default_class: typing.Optional[type[protocol.ResourceType]]
 
     def __init__(
-        cls,
+        cls: type[protocol.ResourceType],
         name: str,
         bases: tuple[type, ...],
         attrs: dict[str, typing.Any],
@@ -28,6 +28,9 @@ class BaseRegistry(type, typing.Generic[protocol.ResourceType], metaclass=Regist
 
         if "__default__" in attrs and attrs["__default__"]:
             cls.register_default_class(cls)  # pyright: ignore[reportGeneralTypeIssues]
+
+        for name, instance in cls.get_default_instances().items():
+            cls.register_instance(name, instance)  # pyright: ignore[reportGeneralTypeIssues]
 
     @classmethod
     def register_class(cls, name: str, class_: type[protocol.ResourceType]) -> None:

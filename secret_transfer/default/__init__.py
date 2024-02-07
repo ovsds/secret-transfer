@@ -3,7 +3,6 @@ from .destination import (
     BashExportDestination,
     EnvDestination,
     GithubCliSecretsDestination,
-    register_default_destination_instances,
 )
 from .source import (
     DotEnvSource,
@@ -12,18 +11,8 @@ from .source import (
     UserInputSource,
     VaultCLIKVSource,
     YCCLILockboxSource,
-    register_default_source_instances,
 )
 from .transfer import DefaultTransfer
-
-
-def register_default_instances() -> None:
-    register_default_source_instances()
-    register_default_destination_instances()
-
-
-register_default_instances()
-
 
 __all__ = [
     "BashExportDestination",
