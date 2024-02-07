@@ -14,6 +14,6 @@ class EnvSource(core.AbstractSource):
         except KeyError as exc:
             raise self.KeyNotFoundError(f"Key {key} is not found in {self.__class__.__name__}") from exc
 
-
-def register_env_source_instance():
-    EnvSource().register("env")
+    @classmethod
+    def get_default_instances(cls) -> dict[str, "EnvSource"]:
+        return {"env": cls()}

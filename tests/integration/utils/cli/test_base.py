@@ -14,6 +14,7 @@ def test_run_utils_exit():
         cli_utils.run(command)
 
     assert exc.value.exit_code == 42
-    assert exc.value.stdout == "test\n"
-    assert exc.value.stderr == "test error\n"
+    assert exc.value.stdout == "test"
+    assert exc.value.stderr == "test error"
     assert exc.value.command == command
+    assert str(exc.value) == f"Command '{command}' failed with exit code 42\n" "STDOUT: test\n" "STDERR: test error"

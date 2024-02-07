@@ -14,6 +14,6 @@ class EnvDestination(core.AbstractDestination):
         except KeyError:
             pass
 
-
-def register_env_destination_instance():
-    EnvDestination().register("env")
+    @classmethod
+    def get_default_instances(cls) -> dict[str, "EnvDestination"]:
+        return {"env": cls()}

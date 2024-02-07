@@ -8,6 +8,6 @@ class UserInputSource(core.AbstractSource):
     def __getitem__(self, key: str) -> utils_types.LiteralArgumentType:
         return getpass.getpass(prompt=f"Please provide a value for {key}: ")
 
-
-def register_user_input_source_instance():
-    UserInputSource().register("user_input")
+    @classmethod
+    def get_default_instances(cls) -> dict[str, "UserInputSource"]:
+        return {"user_input": cls()}
