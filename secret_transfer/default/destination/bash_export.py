@@ -7,7 +7,7 @@ import secret_transfer.utils.types as utils_types
 
 
 class BashExportDestination(core.AbstractDestination):
-    def set(self, key: str, value: utils_types.BaseArgumentType) -> None:
+    def set(self, key: str, value: utils_types.Literal) -> None:
         print(f"export {key}={value}")
 
     def clean(self, key: str) -> None:

@@ -19,5 +19,5 @@ class AbstractSource(core_base.BaseResource, metaclass=SourceRegistry):
         SourceRegistry.register_instance(name, self)
 
     @abc.abstractmethod
-    def __getitem__(self, key: str) -> utils_types.LiteralArgumentType:
+    def __getitem__(self, key: str) -> utils_types.Literal:
         ...

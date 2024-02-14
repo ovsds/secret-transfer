@@ -4,6 +4,7 @@ import pytest
 import pytest_mock
 
 import secret_transfer.core.base as core_base
+import secret_transfer.core.types as core_types
 import secret_transfer.protocol as protocol
 import tests.unit.core.base.proxy.resource.suite as test_suite
 
@@ -114,8 +115,40 @@ def test_proxy_resource_argument(mocker: pytest_mock.MockFixture):
         ),
     )
 
-    source.assert_not_called()
+    source.__getitem__.assert_not_called()
 
+    proxy.test_method()
+    test_class.parse_init_arguments.assert_called_once_with(**{"raw": "source_value"})
+    test_class.assert_called_once_with(**parsed_arguments)
+
+
+def test_proxy_resource_argument_proxy(mocker: pytest_mock.MockFixture):
+    test_class = mocker.Mock(spec=protocol.BaseResourceProtocol)
+
+    raw_arguments = {"raw": "$sources[source][key]"}
+
+    class Source(core_base.BaseResource):
+        _could_be_called = False
+
+        def __getitem__(self, item: str) -> str:
+            assert self._could_be_called, "Should not be called yet"
+            return "source_value"
+
+    source = core_types.Proxy(Source)
+
+    parsed_arguments = {"parsed": "parsed"}
+    test_class.parse_init_arguments.return_value = parsed_arguments
+
+    proxy = ResourceProxy.from_settings(
+        settings=ResourceSettings(
+            resource_classes={"Resource": test_class},
+            class_name="Resource",
+            resources={"sources": {"source": source}},
+            raw_arguments=raw_arguments,
+        ),
+    )
+
+    source._could_be_called = True
     proxy.test_method()
     test_class.parse_init_arguments.assert_called_once_with(**{"raw": "source_value"})
     test_class.assert_called_once_with(**parsed_arguments)
@@ -144,7 +177,7 @@ def test_proxy_resource_argument_nested(mocker: pytest_mock.MockFixture):
         ),
     )
 
-    source.assert_not_called()
+    source.__getitem__.assert_not_called()
 
     proxy.test_method()
     source2.__getitem__.assert_called_once_with("source2_key")
@@ -158,7 +191,7 @@ def test_proxy_resource_argument_resource(mocker: pytest_mock.MockFixture):
     test_class = mocker.Mock(spec=protocol.BaseResourceProtocol)
 
     raw_arguments = {"raw": "$sources[source]"}
-    source = mocker.Mock()
+    source = mocker.MagicMock()
 
     parsed_arguments = {"parsed": "parsed"}
     test_class.parse_init_arguments.return_value = parsed_arguments
@@ -172,7 +205,7 @@ def test_proxy_resource_argument_resource(mocker: pytest_mock.MockFixture):
         ),
     )
 
-    source.assert_not_called()
+    source.__getitem__.assert_not_called()
 
     proxy.test_method()
     test_class.parse_init_arguments.assert_called_once_with(**{"raw": source})
@@ -277,7 +310,7 @@ def test_proxy_resource_argument_resource_name_invalid_type(mocker: pytest_mock.
         ),
     )
 
-    source.assert_not_called()
+    source.__getitem__.assert_not_called()
 
     with pytest.raises(ResourceProxy.InvalidResourceArgumentFormatError):
         proxy.test_method()
@@ -308,7 +341,7 @@ def test_proxy_resource_argument_resource_key_invalid_type(mocker: pytest_mock.M
         ),
     )
 
-    source.assert_not_called()
+    source.__getitem__.assert_not_called()
 
     with pytest.raises(ResourceProxy.InvalidResourceArgumentFormatError):
         proxy.test_method()
@@ -362,7 +395,7 @@ def test_proxy_resource_argument_not_full_resource_name_block(mocker: pytest_moc
         ),
     )
 
-    source.assert_not_called()
+    source.__getitem__.assert_not_called()
 
     with pytest.raises(ResourceProxy.InvalidResourceArgumentFormatError):
         proxy.test_method()
@@ -390,7 +423,7 @@ def test_proxy_resource_argument_not_full_key_block(mocker: pytest_mock.MockFixt
         ),
     )
 
-    source.assert_not_called()
+    source.__getitem__.assert_not_called()
 
     with pytest.raises(ResourceProxy.InvalidResourceArgumentFormatError):
         proxy.test_method()

@@ -12,7 +12,7 @@ class SourceProtocol(base.BaseResourceProtocol, typing.Protocol):
     class KeyNotFoundError(BaseError):
         ...
 
-    def __getitem__(self, key: str) -> utils_types.LiteralArgumentType:
+    def __getitem__(self, key: str) -> utils_types.Literal:
         """
         :raises KeyNotFoundError: if the key is not found
         """

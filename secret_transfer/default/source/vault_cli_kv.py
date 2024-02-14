@@ -1,24 +1,15 @@
 import secret_transfer.core as core
 import secret_transfer.utils.cli as cli_utils
-import secret_transfer.utils.pydantic as pydantic_utils
 import secret_transfer.utils.types as utils_types
 
 
-class Arguments(pydantic_utils.BaseModel):
-    address: str
-    mount: str
-    secret_name: str
-
-
 class VaultCLIKVSource(core.AbstractSource):
-    _arguments_model = Arguments
-
     def __init__(self, *, address: str, mount: str, secret_name: str):
         self._address = address
         self._mount = mount
         self._secret_name = secret_name
 
-    def __getitem__(self, key: str) -> utils_types.LiteralArgumentType:
+    def __getitem__(self, key: str) -> utils_types.Literal:
         """
         :raises KeyNotFoundError: if the key or secret is not found
         """

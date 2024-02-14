@@ -1,5 +1,4 @@
 import dataclasses
-import typing
 
 import pydantic
 import typing_extensions
@@ -24,9 +23,6 @@ class BaseModel(pydantic.BaseModel):
             return cls()
 
         return cls.model_validate(data)
-
-    def shallow_model_dump(self) -> typing.Mapping[str, typing.Any]:
-        return {field: getattr(self, field) for field in self.model_fields_set}
 
     model_config = pydantic.ConfigDict(extra="forbid")
 

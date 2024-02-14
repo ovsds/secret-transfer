@@ -2,8 +2,7 @@ import dataclasses
 import importlib
 import typing
 
-import lazy_object_proxy
-
+import secret_transfer.core.types as core_types
 import secret_transfer.protocol as protocol
 import secret_transfer.utils.types as utils_types
 
@@ -43,7 +42,7 @@ class BaseClassProxy(typing.Generic[protocol.ResourceType]):
         def factory() -> type[protocol.ResourceType]:
             return cls._get_target(settings=settings)
 
-        return typing.cast(type[protocol.ResourceType], lazy_object_proxy.Proxy(factory))
+        return typing.cast(type[protocol.ResourceType], core_types.Proxy(factory))
 
     @classmethod
     def _get_target(cls, settings: ResourceClassSettings[protocol.ResourceType]) -> type[protocol.ResourceType]:
@@ -66,16 +65,8 @@ class BaseClassProxy(typing.Generic[protocol.ResourceType]):
 
 @typing.runtime_checkable
 class GettableResourceProtocol(typing.Protocol):
-    def __getitem__(self, key: str) -> utils_types.LiteralArgumentType:
+    def __getitem__(self, key: str) -> utils_types.Literal:
         ...
-
-
-InitArgumentsType = typing.Union[
-    utils_types.LiteralArgumentType,
-    protocol.BaseResourceProtocol,
-    dict[str, "InitArgumentsType"],
-    list["InitArgumentsType"],
-]
 
 
 @dataclasses.dataclass
@@ -183,7 +174,7 @@ class BaseResourceProxy(typing.Generic[protocol.ResourceType]):
         def factory() -> protocol.ResourceType:
             return cls._get_target(settings=settings)
 
-        return typing.cast(protocol.ResourceType, lazy_object_proxy.Proxy(factory))
+        return typing.cast(protocol.ResourceType, core_types.Proxy(factory))
 
     @classmethod
     def _get_target(cls, settings: ResourceSettings[protocol.ResourceType]) -> protocol.ResourceType:
@@ -211,7 +202,7 @@ class BaseResourceProxy(typing.Generic[protocol.ResourceType]):
         cls,
         settings: ResourceSettings[protocol.ResourceType],
         raw_argument: str,
-    ) -> typing.Union[protocol.BaseResourceProtocol, utils_types.LiteralArgumentType]:
+    ) -> core_types.BaseInitArgumentType:
         try:
             argument = _parse_resource_argument(argument=raw_argument)
         except ParseResourceArgumentError as exc:
@@ -248,20 +239,20 @@ class BaseResourceProxy(typing.Generic[protocol.ResourceType]):
                 f"Resource({resource_name!r}) does not implement [__getitem__(str) -> str | int | float | bool] method"
             )
 
-        def factory() -> utils_types.LiteralArgumentType:
+        def factory() -> utils_types.Literal:
             try:
                 return resource[key]
             except Exception as exc:
                 raise cls.ResourceError(f"Key({key!r}) is not found in resource({resource_name!r})") from exc
 
-        return typing.cast(utils_types.LiteralArgumentType, lazy_object_proxy.Proxy(factory))
+        return core_types.Proxy(factory)
 
     @classmethod
     def _get_literal_argument_value(
         cls,
         settings: ResourceSettings[protocol.ResourceType],
-        raw_argument: utils_types.LiteralArgumentType,
-    ) -> InitArgumentsType:
+        raw_argument: core_types.BaseRawArgumentType,
+    ) -> core_types.BaseInitArgumentType:
         if isinstance(raw_argument, str) and raw_argument.startswith("$"):
             return cls._get_resource_argument_value(settings=settings, raw_argument=raw_argument)
 
@@ -271,23 +262,25 @@ class BaseResourceProxy(typing.Generic[protocol.ResourceType]):
     def _get_argument_value(
         cls,
         settings: ResourceSettings[protocol.ResourceType],
-        raw_argument: utils_types.BaseArgumentType,
-    ) -> InitArgumentsType:
-        if isinstance(raw_argument, dict):
-            return {
-                key: cls._get_argument_value(settings=settings, raw_argument=value)
-                for key, value in raw_argument.items()
-            }
+        raw_argument: core_types.RawArgumentType,
+    ) -> core_types.InitArgumentType:
+        if raw_argument is None:
+            return None
 
-        if isinstance(raw_argument, list):
+        if isinstance(raw_argument, utils_types.Literals):
+            return cls._get_literal_argument_value(settings=settings, raw_argument=raw_argument)
+
+        if isinstance(raw_argument, typing.Sequence):
             return [cls._get_argument_value(settings=settings, raw_argument=value) for value in raw_argument]
 
-        return cls._get_literal_argument_value(settings=settings, raw_argument=raw_argument)
+        return {
+            key: cls._get_argument_value(settings=settings, raw_argument=value) for key, value in raw_argument.items()
+        }
 
     @classmethod
     def _get_arguments(
         cls, settings: ResourceSettings[protocol.ResourceType]
-    ) -> typing.Mapping[str, InitArgumentsType]:
+    ) -> typing.Mapping[str, core_types.InitArgumentType]:
         return {
             key: cls._get_argument_value(settings=settings, raw_argument=value)
             for key, value in settings.raw_arguments.items()
