@@ -6,7 +6,7 @@ class PresetSource(core.AbstractSource):
     def __init__(self, **kwargs: str):
         self._data = kwargs
 
-    def __getitem__(self, key: str) -> utils_types.LiteralArgumentType:
+    def __getitem__(self, key: str) -> utils_types.Literal:
         """
         :raises KeyNotFoundError: if the key is not found
         """

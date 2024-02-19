@@ -39,6 +39,19 @@ def test_parse_init_arguments():
     }
 
 
+def test_parse_init_arguments_invalid():
+    test_source = test_utils.MagicMock(spec=protocol.SourceProtocol)
+
+    with pytest.raises(secret_transfer.DefaultCollection.ValidationError):
+        secret_transfer.DefaultCollection.parse_init_arguments(
+            **{
+                TEST_KEY: {
+                    "source1": test_source,
+                },
+            }
+        )
+
+
 @pytest.fixture(name="test_source")
 def fixture_test_source(mocker: pytest_mock.MockerFixture) -> test_utils.MagicMock:
     test_source = mocker.MagicMock(spec=protocol.SourceProtocol)

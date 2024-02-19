@@ -1,11 +1,10 @@
 import dataclasses
 import typing
 
-import pydantic
+import typing_extensions
 
 import secret_transfer.core as core
 import secret_transfer.protocol as protocol
-import secret_transfer.utils.pydantic as pydantic_utils
 import secret_transfer.utils.types as utils_types
 
 
@@ -14,11 +13,22 @@ class DefaultCollectionItem:
     source: protocol.SourceProtocol
     key: typing.Optional[str] = None
 
+    @classmethod
+    def from_init_arguments(cls, data: core.InitArgumentType) -> typing_extensions.Self:
+        if not isinstance(data, typing.Mapping):
+            raise ValueError("Should be a mapping.")
 
-class Arguments(pydantic_utils.BaseModel):
-    items: typing.Mapping[str, DefaultCollectionItem]
+        source = data.get("source")
+        if source is None:
+            raise ValueError("Should have a source.")
+        if not isinstance(source, protocol.SourceProtocol):
+            raise ValueError("Should have a source of type SourceProtocol.")
 
-    model_config = pydantic.ConfigDict(arbitrary_types_allowed=True)
+        key = data.get("key")
+        if key is not None and not isinstance(key, str):
+            raise ValueError("Should have a key of type str or None.")
+
+        return cls(source=source, key=key)
 
 
 class DefaultCollection(core.AbstractCollection):
@@ -28,11 +38,18 @@ class DefaultCollection(core.AbstractCollection):
         self._items = items
 
     @classmethod
-    def parse_init_arguments(cls, **arguments: utils_types.BaseArgumentType) -> typing.Mapping[str, typing.Any]:
-        model = Arguments.model_validate({"items": arguments})
-        return model.items
+    def parse_init_arguments(cls, **items: core.InitArgumentType) -> typing.Mapping[str, DefaultCollectionItem]:
+        result: dict[str, DefaultCollectionItem] = {}
 
-    def __getitem__(self, key: str) -> utils_types.LiteralArgumentType:
+        for key, value in items.items():
+            try:
+                result[key] = DefaultCollectionItem.from_init_arguments(value)
+            except ValueError as exc:
+                raise cls.ValidationError(f"Error parsing item {key}: {exc}") from exc
+
+        return result
+
+    def __getitem__(self, key: str) -> utils_types.Literal:
         try:
             item = self._items[key]
         except KeyError as exc:
@@ -47,6 +64,6 @@ class DefaultCollection(core.AbstractCollection):
     def __iter__(self) -> typing.Iterator[str]:
         return iter(self._items)
 
-    def items(self) -> typing.Iterator[tuple[str, utils_types.LiteralArgumentType]]:
+    def items(self) -> typing.Iterator[tuple[str, utils_types.Literal]]:
         for key in self:
             yield key, self[key]

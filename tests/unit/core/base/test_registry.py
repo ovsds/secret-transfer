@@ -154,7 +154,7 @@ def test_default_class_collision_force(registry1: RegistryType):
 def test_default_instance_registration(registry1: RegistryType):
     class Class1(metaclass=registry1):
         @classmethod
-        def get_default_instances(cls) -> dict[str, ResourceTestProtocol]:
+        def get_default_instances(cls) -> dict[str, typing_extensions.Self]:
             return {"test_name": cls()}
 
     assert "test_name" in registry1.instances
@@ -164,12 +164,12 @@ def test_default_instance_registration(registry1: RegistryType):
 def test_default_instance_collision(registry1: RegistryType):
     class Class1(metaclass=registry1):  # pyright: ignore[reportUnusedClass]
         @classmethod
-        def get_default_instances(cls) -> dict[str, ResourceTestProtocol]:
+        def get_default_instances(cls) -> dict[str, typing_extensions.Self]:
             return {"test_name": cls()}
 
     with pytest.raises(ValueError):
 
         class Class2(metaclass=registry1):  # pyright: ignore[reportUnusedClass]
             @classmethod
-            def get_default_instances(cls) -> dict[str, ResourceTestProtocol]:
+            def get_default_instances(cls) -> dict[str, typing_extensions.Self]:
                 return {"test_name": cls()}

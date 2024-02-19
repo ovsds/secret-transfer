@@ -30,12 +30,21 @@ from .transfer import (
     TransferRegistry,
     TransferSettings,
 )
+from .types import (
+    BaseInitArgumentType,
+    BaseRawArgumentType,
+    InitArgumentType,
+    Proxy,
+)
 
 __all__ = [
     "AbstractCollection",
     "AbstractDestination",
     "AbstractSource",
     "AbstractTransfer",
+    "BaseInitArgumentType",
+    "BaseInitArgumentType",
+    "BaseRawArgumentType",
     "CollectionClassProxy",
     "CollectionClassSettings",
     "CollectionProxy",
@@ -46,6 +55,8 @@ __all__ = [
     "DestinationProxy",
     "DestinationRegistry",
     "DestinationSettings",
+    "InitArgumentType",
+    "Proxy",
     "SourceClassProxy",
     "SourceClassSettings",
     "SourceProxy",

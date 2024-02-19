@@ -1,14 +1,11 @@
 import typing
 
-LiteralArgumentType = typing.Union[
+Literals = (str, int, float, bool)
+
+Literal = typing.Union[
+    None,
     str,
     int,
     float,
     bool,
-]
-
-BaseArgumentType = typing.Union[
-    LiteralArgumentType,
-    dict[str, "BaseArgumentType"],
-    list["BaseArgumentType"],
 ]

@@ -12,7 +12,7 @@ class CollectionProtocol(base.BaseResourceProtocol, typing.Protocol):
     class KeyNotFoundError(BaseError):
         ...
 
-    def __getitem__(self, key: str) -> utils_types.LiteralArgumentType:
+    def __getitem__(self, key: str) -> utils_types.Literal:
         """
         :raises KeyNotFoundError: if the key is not found
         :raises SourceNotFoundError: if the source is not found
@@ -23,7 +23,7 @@ class CollectionProtocol(base.BaseResourceProtocol, typing.Protocol):
     def __iter__(self) -> typing.Iterator[str]:
         ...
 
-    def items(self) -> typing.Iterator[tuple[str, utils_types.LiteralArgumentType]]:
+    def items(self) -> typing.Iterator[tuple[str, utils_types.Literal]]:
         """
         :raises SourceNotFoundError: if the source is not found
         :raises KeyNotFoundInSourceError: if the key is not found in the source

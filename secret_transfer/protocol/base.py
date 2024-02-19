@@ -5,8 +5,14 @@ import typing_extensions
 
 @typing.runtime_checkable
 class BaseResourceProtocol(typing.Protocol):
+    class ValidationError(Exception):
+        ...
+
     @classmethod
     def parse_init_arguments(cls, **arguments: typing.Any) -> typing.Mapping[str, typing.Any]:
+        """
+        :raises ValidationError: if the arguments are invalid
+        """
         ...
 
     @classmethod

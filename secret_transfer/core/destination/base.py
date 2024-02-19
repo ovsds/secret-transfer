@@ -16,7 +16,7 @@ class AbstractDestination(core_base.BaseResource, metaclass=DestinationRegistry)
         DestinationRegistry.register_instance(name, self)
 
     @abc.abstractmethod
-    def set(self, key: str, value: utils_types.BaseArgumentType) -> None:
+    def set(self, key: str, value: utils_types.Literal) -> None:
         ...
 
     @abc.abstractmethod

@@ -1,20 +1,9 @@
-import pydantic
-
 import secret_transfer.core.transfer.base as base
 import secret_transfer.protocol as protocol
-import secret_transfer.utils.pydantic as pydantic_utils
-
-
-class Arguments(pydantic_utils.BaseModel):
-    collection: protocol.CollectionProtocol
-    destination: protocol.DestinationProtocol
-
-    model_config = pydantic.ConfigDict(arbitrary_types_allowed=True)
 
 
 class DefaultTransfer(base.AbstractTransfer):
     __default__ = True
-    _arguments_model = Arguments
 
     def __init__(
         self,

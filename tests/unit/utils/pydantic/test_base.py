@@ -40,18 +40,6 @@ def test_pydantic_validation_error():
         Model.from_yaml(raw="")
 
 
-def test_pydantic_shallow_model_dump():
-    class InnerModel(pydantic_utils.BaseModel):
-        test_key: str
-
-    class Model(pydantic_utils.BaseModel):
-        inner_model: InnerModel
-
-    model = Model.from_yaml(raw="inner_model:\n  test_key: test_value")
-
-    assert model.shallow_model_dump() == {"inner_model": InnerModel(test_key="test_value")}
-
-
 def test_format_model_validation_error():
     class Model(pydantic_utils.BaseModel):
         test_key: str
