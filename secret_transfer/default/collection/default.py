@@ -21,6 +21,7 @@ class DefaultCollectionItem:
         source = data.get("source")
         if source is None:
             raise ValueError("Should have a source.")
+
         if not isinstance(source, protocol.SourceProtocol):
             raise ValueError("Should have a source of type SourceProtocol.")
 
