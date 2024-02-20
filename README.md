@@ -389,12 +389,12 @@ import secret_transfer.utils.types as secret_transfer_types
 
 
 class CustomDestination(secret_transfer_core.AbstractDestination):
-    def set(self, key: str, value: secret_transfer_types.Literal) -> None:
+    def __setitem__(self, key: str, value: secret_transfer_types.Literal) -> None:
         # Required to implement
         # Set the value of the secret by key
         ...
 
-    def clean(self, key: str) -> None:
+    def __delitem__(self, key: str) -> None:
         # Optional to implement
         # Clean all secrets in the destination
         ...

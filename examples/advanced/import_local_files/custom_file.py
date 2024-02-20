@@ -8,8 +8,8 @@ class CustomSource(secret_transfer_core.AbstractSource):
 
 
 class CustomDestination(secret_transfer_core.AbstractDestination):
-    def set(self, key: str, value: secret_transfer_types.Literal):
+    def __setitem__(self, key: str, value: secret_transfer_types.Literal):
         print(f"CustomDestination.set called with key: {key} and value: {value}")
 
-    def clean(self, key: str) -> None:
+    def __delitem__(self, key: str) -> None:
         print("CustomDestination.clean called with key: {key}")

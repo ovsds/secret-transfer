@@ -13,9 +13,9 @@ class AbstractDestination(core_base.BaseResource, metaclass=DestinationRegistry)
     __register__ = False
 
     @abc.abstractmethod
-    def set(self, key: str, value: utils_types.Literal) -> None:
+    def __setitem__(self, key: str, value: utils_types.Literal) -> None:
         ...
 
     @abc.abstractmethod
-    def clean(self, key: str) -> None:
+    def __delitem__(self, key: str) -> None:
         ...

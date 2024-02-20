@@ -48,7 +48,7 @@ def test_set(gh_mock: test_utils.Mock):
         owner_name=TEST_ORGANIZATION_NAME,
         repo_name=TEST_REPO_NAME,
     )
-    destination.set(key=TEST_KEY, value=TEST_VALUE)
+    destination[TEST_KEY] = TEST_VALUE
     gh_mock.secret.set.assert_called_once_with(
         key=TEST_KEY,
         value=TEST_VALUE,
@@ -61,7 +61,7 @@ def test_clean(gh_mock: test_utils.Mock):
         owner_name=TEST_ORGANIZATION_NAME,
         repo_name=TEST_REPO_NAME,
     )
-    destination.clean(key=TEST_KEY)
+    del destination[TEST_KEY]
     gh_mock.secret.delete.assert_called_once_with(
         key=TEST_KEY,
         repo_url=TEST_REPO_URL,
@@ -75,7 +75,7 @@ def test_clean_not_existing(gh_mock: test_utils.Mock):
     )
     gh_mock.secret.delete.side_effect = gh_mock.secret.KeyNotFoundError
 
-    destination.clean(key=TEST_KEY)
+    del destination[TEST_KEY]
 
     gh_mock.secret.delete.assert_called_once_with(
         key=TEST_KEY,
