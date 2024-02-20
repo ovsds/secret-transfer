@@ -21,7 +21,7 @@ class KV(base.CLICommand):
         :raises KeyNotFoundError: if the key is not found
         """
         try:
-            return cls._run(f"get" f" -address={address}" f" -mount={mount}" f" -field={field}" f" {value}")
+            return cls._run(f"get -address={address} -mount={mount} -field={field} {value}")
         except base.RunError as exc:
             if "Code: 403" in exc.stderr:
                 raise cls.MountForbiddenError(f"Access to mount({mount}) is forbidden") from exc
