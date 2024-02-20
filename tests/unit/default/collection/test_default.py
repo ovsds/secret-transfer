@@ -39,14 +39,45 @@ def test_parse_init_arguments():
     }
 
 
-def test_parse_init_arguments_invalid():
-    test_source = test_utils.MagicMock(spec=protocol.SourceProtocol)
+def test_parse_init_arguments_not_a_mapping():
+    with pytest.raises(secret_transfer.DefaultCollection.ValidationError):
+        secret_transfer.DefaultCollection.parse_init_arguments(
+            **{
+                TEST_KEY: "not_a_mapping",
+            }
+        )
 
+
+def test_parse_init_arguments_no_source():
     with pytest.raises(secret_transfer.DefaultCollection.ValidationError):
         secret_transfer.DefaultCollection.parse_init_arguments(
             **{
                 TEST_KEY: {
-                    "source1": test_source,
+                    "key": TEST_SOURCE_KEY,
+                },
+            }
+        )
+
+
+def test_parse_init_arguments_no_source_of_type():
+    with pytest.raises(secret_transfer.DefaultCollection.ValidationError):
+        secret_transfer.DefaultCollection.parse_init_arguments(
+            **{
+                TEST_KEY: {
+                    "source": "not_a_source",
+                    "key": TEST_SOURCE_KEY,
+                },
+            }
+        )
+
+
+def test_parse_init_arguments_no_key_of_type():
+    with pytest.raises(secret_transfer.DefaultCollection.ValidationError):
+        secret_transfer.DefaultCollection.parse_init_arguments(
+            **{
+                TEST_KEY: {
+                    "source": test_utils.MagicMock(spec=protocol.SourceProtocol),
+                    "key": 123,
                 },
             }
         )
