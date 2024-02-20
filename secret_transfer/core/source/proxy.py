@@ -9,5 +9,4 @@ class SourceClassProxy(core_base.BaseClassProxy[protocol.SourceProtocol]):
     _proxy_protocol = protocol.SourceProtocol
 
 
-class SourceProxy(core_base.BaseResourceProxy[protocol.SourceProtocol]):
-    ...
+class SourceProxy(core_base.BaseResourceProxy[protocol.SourceProtocol]): ...

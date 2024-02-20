@@ -20,8 +20,7 @@ class Repo(base.CLICommand):
 class Secret(base.CLICommand):
     _prefix = "gh secret"
 
-    class KeyNotFoundError(base.CLICommand.BaseError):
-        ...
+    class KeyNotFoundError(base.CLICommand.BaseError): ...
 
     @classmethod
     def set(cls, key: str, value: str, repo_url: str) -> None:

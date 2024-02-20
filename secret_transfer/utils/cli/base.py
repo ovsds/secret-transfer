@@ -32,8 +32,7 @@ def run(command: str, encoding: str = "utf-8") -> str:
 
 
 class CLICommand:
-    class BaseError(Exception):
-        ...
+    class BaseError(Exception): ...
 
     _prefix = ""
 

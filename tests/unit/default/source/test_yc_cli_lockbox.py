@@ -17,8 +17,7 @@ TEST_LOCKBOX = "test_lockbox"
 def fixture_yc_mock(mocker: pytest_mock.MockFixture) -> test_utils.Mock:
     yc_mock = mocker.patch("secret_transfer.utils.cli.YC")
 
-    class KeyNotFoundError(Exception):
-        ...
+    class KeyNotFoundError(Exception): ...
 
     yc_mock.lockbox.payload.KeyNotFoundError = KeyNotFoundError
 

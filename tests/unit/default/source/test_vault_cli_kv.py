@@ -17,18 +17,15 @@ TEST_VALUE = "test_value"
 def fixture_vault_mock(mocker: pytest_mock.MockFixture) -> test_utils.Mock:
     mock = mocker.patch("secret_transfer.utils.cli.Vault")
 
-    class SecretNotFoundError(Exception):
-        ...
+    class SecretNotFoundError(Exception): ...
 
     mock.kv.SecretNotFoundError = SecretNotFoundError
 
-    class KeyNotFoundError(Exception):
-        ...
+    class KeyNotFoundError(Exception): ...
 
     mock.kv.KeyNotFoundError = KeyNotFoundError
 
-    class MountForbiddenError(Exception):
-        ...
+    class MountForbiddenError(Exception): ...
 
     mock.kv.MountForbiddenError = MountForbiddenError
 

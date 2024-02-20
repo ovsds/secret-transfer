@@ -4,8 +4,7 @@ import secret_transfer.utils.cli.base as base
 class LockboxPayload(base.CLICommand):
     _prefix = "yc lockbox payload"
 
-    class KeyNotFoundError(base.CLICommand.BaseError):
-        ...
+    class KeyNotFoundError(base.CLICommand.BaseError): ...
 
     @classmethod
     def get(cls, profile_name: str, folder_name: str, lockbox_name: str, key: str) -> str:
