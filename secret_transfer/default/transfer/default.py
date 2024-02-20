@@ -23,11 +23,11 @@ class DefaultTransfer(base.AbstractTransfer):
             raise self.CollectionError("Collection failed") from exc
 
         for key, value in items:
-            destination.set(key=key, value=value)
+            destination[key] = value
 
     def clean(self) -> None:
         collection = self._collection
         destination = self._destination
 
         for key in collection:
-            destination.clean(key=key)
+            del destination[key]

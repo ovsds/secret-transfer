@@ -44,7 +44,7 @@ def fixture_test_collection(mocker: pytest_mock.MockerFixture) -> test_utils.Mag
 
 @pytest.fixture(name="test_destination")
 def fixture_test_destination(mocker: pytest_mock.MockerFixture) -> test_utils.Mock:
-    test_destination = mocker.Mock(spec=protocol.DestinationProtocol)
+    test_destination = mocker.MagicMock(spec=protocol.DestinationProtocol)
     return test_destination
 
 
@@ -60,9 +60,9 @@ def test_run(test_collection: test_utils.Mock, test_destination: test_utils.Mock
 
     transfer.run()
     test_collection.items.assert_called_once_with()
-    test_destination.set.assert_has_calls(
+    test_destination.__setitem__.assert_has_calls(
         calls=[
-            ((), {"key": TEST_KEY, "value": TEST_VALUE}),
+            ((TEST_KEY, TEST_VALUE), {}),
         ],
         any_order=True,
     )
@@ -82,7 +82,7 @@ def test_run_collection_error(
     with pytest.raises(secret_transfer.DefaultTransfer.CollectionError):
         transfer.run()
 
-    test_destination.set.assert_not_called()
+    test_destination.__setitem__.assert_not_called()
 
 
 def test_clean(test_collection: test_utils.Mock, test_destination: test_utils.Mock):
@@ -94,9 +94,9 @@ def test_clean(test_collection: test_utils.Mock, test_destination: test_utils.Mo
     )
     transfer.clean()
     test_collection.__iter__.assert_called_once_with()
-    test_destination.clean.assert_has_calls(
+    test_destination.__delitem__.assert_has_calls(
         calls=[
-            ((), {"key": TEST_KEY}),
+            ((TEST_KEY,), {}),
         ],
         any_order=True,
     )

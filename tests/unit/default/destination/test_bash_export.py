@@ -19,7 +19,7 @@ def test_set(mocker: pytest_mock.MockFixture):
     mocked_print = mocker.patch("builtins.print")
 
     destination = secret_transfer.BashExportDestination()
-    destination.set(TEST_KEY, TEST_VALUE)
+    destination[TEST_KEY] = TEST_VALUE
 
     mocked_print.assert_called_once_with(f"export {TEST_KEY}={TEST_VALUE}")
 
@@ -28,6 +28,6 @@ def test_clean(mocker: pytest_mock.MockFixture):
     mocked_print = mocker.patch("builtins.print")
 
     destination = secret_transfer.BashExportDestination()
-    destination.clean(TEST_KEY)
+    del destination[TEST_KEY]
 
     mocked_print.assert_called_once_with(f"unset {TEST_KEY}")

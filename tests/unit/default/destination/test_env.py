@@ -17,7 +17,7 @@ def test_registered():
 
 def test_set():
     destination = secret_transfer.EnvDestination()
-    destination.set(TEST_KEY, TEST_VALUE)
+    destination[TEST_KEY] = TEST_VALUE
 
     assert os.environ.get(TEST_KEY) == TEST_VALUE
 
@@ -26,7 +26,7 @@ def test_set_overwrite():
     os.environ[TEST_KEY] = "old_value"
 
     destination = secret_transfer.EnvDestination()
-    destination.set(TEST_KEY, TEST_VALUE)
+    destination[TEST_KEY] = TEST_VALUE
 
     assert os.environ.get(TEST_KEY) == TEST_VALUE
 
@@ -35,13 +35,13 @@ def test_clean():
     os.environ[TEST_KEY] = TEST_VALUE
 
     destination = secret_transfer.EnvDestination()
-    destination.clean(TEST_KEY)
+    del destination[TEST_KEY]
 
     assert os.environ.get(TEST_KEY) is None
 
 
 def test_clean_not_existing():
     destination = secret_transfer.EnvDestination()
-    destination.clean(TEST_KEY)
+    del destination[TEST_KEY]
 
     assert os.environ.get(TEST_KEY) is None
