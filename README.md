@@ -334,6 +334,116 @@ transfers:
       destination: $destinations[env]
 ```
 
+### Custom class definitions
+
+You can define custom classes for sources, destinations, collections, and transfers.
+
+#### Any resource
+
+```python
+import typing
+import typing_extensions
+
+import secret_transfer.core as secret_transfer_core
+
+
+class CustomResource(...):
+    __register__ = ... # bool: Should the class be registered on creation (optional, default: True)
+    __default__ = ... # bool: Should the class be used as default for its type (optional, default: False)
+
+    @classmethod
+    def parse_init_arguments(
+      cls,
+      **arguments: secret_transfer_core.InitArgumentType
+    ) -> typing.Mapping[str, typing.Any]:
+        # Optional to implement
+        # Parse and validate init arguments passed from the YaML definition for the future instance creation
+        ...
+
+    @classmethod
+    def get_default_instances(cls) -> typing.Mapping[str, typing_extensions.Self]:
+        # Optional to implement
+        # Return default instances of the class to be registered at import-time
+        ...
+```
+
+#### Source
+
+```python
+import secret_transfer.core as secret_transfer_core
+import secret_transfer.utils.types as secret_transfer_types
+
+
+class CustomSource(secret_transfer_core.AbstractSource):
+    def __getitem__(self, key: str) -> secret_transfer_types.Literal:
+        # Required to implement
+        # Return the value of the secret by key
+        ...
+```
+
+#### Destination
+
+```python
+import secret_transfer.core as secret_transfer_core
+import secret_transfer.utils.types as secret_transfer_types
+
+
+class CustomDestination(secret_transfer_core.AbstractDestination):
+    def set(self, key: str, value: secret_transfer_types.Literal) -> None:
+        # Required to implement
+        # Set the value of the secret by key
+        ...
+
+    def clean(self, key: str) -> None:
+        # Optional to implement
+        # Clean all secrets in the destination
+        ...
+```
+
+#### Collection
+
+```python
+import typing
+
+import secret_transfer.core as secret_transfer_core
+import secret_transfer.utils.types as secret_transfer_types
+
+
+class CustomCollection(secret_transfer_core.AbstractCollection):
+    def __getitem__(self, key: str) -> secret_transfer_types.Literal:
+        # Required to implement
+        # Return the value of the secret by key
+        ...
+
+    def __iter__(self) -> typing.Iterator[str]:
+        # Required to implement
+        # Return an iterator over the keys of the collection
+        ...
+
+    def items(self) -> typing.Iterator[tuple[str, secret_transfer_types.Literal]]:
+        # Required to implement
+        # Return an iterator over the items of the collection
+        ...
+```
+
+#### Transfer
+
+```python
+import secret_transfer.core as secret_transfer_core
+
+
+class CustomTransfer(secret_transfer_core.AbstractTransfer):
+    def run(self) -> None:
+        # Required to implement
+        # Transfer secrets
+        ...
+
+    def clean(self) -> None:
+        # Required to implement
+        # Clean all secrets in the transfer
+        ...
+```
+
 ### Usage Examples
 
 Check [examples](examples/README.md) for usage examples.

@@ -12,9 +12,6 @@ class DestinationRegistry(core_base.BaseRegistry[protocol.DestinationProtocol]):
 class AbstractDestination(core_base.BaseResource, metaclass=DestinationRegistry):
     __register__ = False
 
-    def register(self, name: str) -> None:
-        DestinationRegistry.register_instance(name, self)
-
     @abc.abstractmethod
     def set(self, key: str, value: utils_types.Literal) -> None:
         ...

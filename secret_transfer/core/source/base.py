@@ -15,9 +15,6 @@ class AbstractSource(core_base.BaseResource, metaclass=SourceRegistry):
     BaseError = protocol.SourceProtocol.BaseError
     KeyNotFoundError = protocol.SourceProtocol.KeyNotFoundError
 
-    def register(self, name: str) -> None:
-        SourceRegistry.register_instance(name, self)
-
     @abc.abstractmethod
     def __getitem__(self, key: str) -> utils_types.Literal:
         ...
