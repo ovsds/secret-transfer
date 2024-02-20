@@ -6,11 +6,9 @@ import secret_transfer.utils.types as utils_types
 
 @typing.runtime_checkable
 class CollectionProtocol(base.BaseResourceProtocol, typing.Protocol):
-    class BaseError(Exception):
-        ...
+    class BaseError(Exception): ...
 
-    class KeyNotFoundError(BaseError):
-        ...
+    class KeyNotFoundError(BaseError): ...
 
     def __getitem__(self, key: str) -> utils_types.Literal:
         """
@@ -20,8 +18,7 @@ class CollectionProtocol(base.BaseResourceProtocol, typing.Protocol):
         """
         ...
 
-    def __iter__(self) -> typing.Iterator[str]:
-        ...
+    def __iter__(self) -> typing.Iterator[str]: ...
 
     def items(self) -> typing.Iterator[tuple[str, utils_types.Literal]]:
         """

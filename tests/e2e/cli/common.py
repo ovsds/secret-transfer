@@ -5,8 +5,7 @@ import typing
 
 
 class SettingsFileContext(typing.Protocol):
-    def __call__(self, content: str) -> contextlib.AbstractContextManager[str]:
-        ...
+    def __call__(self, content: str) -> contextlib.AbstractContextManager[str]: ...
 
 
 @dataclasses.dataclass

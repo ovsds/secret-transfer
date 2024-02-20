@@ -9,5 +9,4 @@ class CollectionClassProxy(core_base.BaseClassProxy[protocol.CollectionProtocol]
     _proxy_protocol = protocol.CollectionProtocol
 
 
-class CollectionProxy(core_base.BaseResourceProxy[protocol.CollectionProtocol]):
-    ...
+class CollectionProxy(core_base.BaseResourceProxy[protocol.CollectionProtocol]): ...

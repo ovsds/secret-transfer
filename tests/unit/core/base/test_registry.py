@@ -6,11 +6,15 @@ import typing_extensions
 import secret_transfer.core.base as core_base
 
 
-class ResourceTestProtocol(typing.Protocol):
-    ...
+class ResourceTestProtocol(typing.Protocol): ...
 
 
-Registry = core_base.BaseRegistry[ResourceTestProtocol]  # pyright: ignore[reportGeneralTypeIssues]
+class Registry(core_base.BaseRegistry[ResourceTestProtocol]):  # pyright: ignore[reportInvalidTypeArguments]
+    classes: dict[str, type[ResourceTestProtocol]]
+    instances: dict[str, ResourceTestProtocol]
+    default_class: typing.Optional[type[ResourceTestProtocol]]
+
+
 RegistryType = type[Registry]
 
 
@@ -22,16 +26,14 @@ class ClassBase:
 
 @pytest.fixture(name="registry1")
 def fixture_registry1() -> RegistryType:
-    class Registry1(Registry):
-        ...
+    class Registry1(Registry): ...
 
     return Registry1
 
 
 @pytest.fixture(name="registry2")
 def fixture_registry2() -> RegistryType:
-    class Registry2(Registry):
-        ...
+    class Registry2(Registry): ...
 
     return Registry2
 
@@ -58,8 +60,7 @@ def test_explicit_class_registration(registry1: RegistryType):
 
 
 def test_implicit_class_registration(registry1: RegistryType):
-    class Class1(ClassBase, metaclass=registry1):
-        ...
+    class Class1(ClassBase, metaclass=registry1): ...
 
     assert Class1.__name__ in registry1.classes
     assert registry1.classes[Class1.__name__] is Class1
@@ -73,7 +74,7 @@ def test_explicit_class_non_registration(registry1: RegistryType):
 
 
 def test_class_name_collision(registry1: RegistryType):
-    class Class1(ClassBase, metaclass=registry1):  # pyright: ignore[reportUnusedClass, reportGeneralTypeIssues]
+    class Class1(ClassBase, metaclass=registry1):  # pyright: ignore[reportUnusedClass, reportRedeclaration]
         __register__ = True
 
     with pytest.raises(ValueError):
@@ -83,8 +84,7 @@ def test_class_name_collision(registry1: RegistryType):
 
 
 def test_instance_registration(registry1: RegistryType):
-    class Class1(ClassBase, metaclass=registry1):
-        ...
+    class Class1(ClassBase, metaclass=registry1): ...
 
     name = "test_name"
 
@@ -96,8 +96,7 @@ def test_instance_registration(registry1: RegistryType):
 
 
 def test_instance_name_collision(registry1: RegistryType):
-    class Class1(ClassBase, metaclass=registry1):
-        ...
+    class Class1(ClassBase, metaclass=registry1): ...
 
     name = "test_name"
 
@@ -110,8 +109,7 @@ def test_instance_name_collision(registry1: RegistryType):
 
 
 def test_default_class_registration(registry1: RegistryType):
-    class Class1(ClassBase, metaclass=registry1):
-        ...
+    class Class1(ClassBase, metaclass=registry1): ...
 
     registry1.register_default_class(Class1)
 
@@ -126,11 +124,9 @@ def test_default_class_registration_using_attribute(registry1: RegistryType):
 
 
 def test_default_class_collision(registry1: RegistryType):
-    class Class1(ClassBase, metaclass=registry1):
-        ...
+    class Class1(ClassBase, metaclass=registry1): ...
 
-    class Class2(ClassBase, metaclass=registry1):
-        ...
+    class Class2(ClassBase, metaclass=registry1): ...
 
     registry1.register_default_class(Class1)
     with pytest.raises(ValueError):
@@ -138,11 +134,9 @@ def test_default_class_collision(registry1: RegistryType):
 
 
 def test_default_class_collision_force(registry1: RegistryType):
-    class Class1(ClassBase, metaclass=registry1):
-        ...
+    class Class1(ClassBase, metaclass=registry1): ...
 
-    class Class2(ClassBase, metaclass=registry1):
-        ...
+    class Class2(ClassBase, metaclass=registry1): ...
 
     registry1.register_default_class(Class1)
 

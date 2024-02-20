@@ -9,8 +9,7 @@ class Source(core.AbstractSource):
     __register__ = False
 
 
-class InvalidSource:
-    ...
+class InvalidSource: ...
 
 
 class TestSourceClassProxy(test_suite.ClassProxySuite[protocol.SourceProtocol]):

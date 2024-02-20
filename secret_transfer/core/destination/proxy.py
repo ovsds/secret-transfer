@@ -9,5 +9,4 @@ class DestinationClassProxy(core_base.BaseClassProxy[protocol.DestinationProtoco
     _proxy_protocol = protocol.DestinationProtocol
 
 
-class DestinationProxy(core_base.BaseResourceProxy[protocol.DestinationProtocol]):
-    ...
+class DestinationProxy(core_base.BaseResourceProxy[protocol.DestinationProtocol]): ...

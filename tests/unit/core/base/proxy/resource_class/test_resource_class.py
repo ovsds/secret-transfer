@@ -8,16 +8,13 @@ import tests.unit.core.base.proxy.resource_class.suite as test_suite
 
 
 @typing.runtime_checkable
-class ResourceProtocol(protocol.BaseResourceProtocol, typing.Protocol):
-    ...
+class ResourceProtocol(protocol.BaseResourceProtocol, typing.Protocol): ...
 
 
-class Resource(core_base.BaseResource):
-    ...
+class Resource(core_base.BaseResource): ...
 
 
-class InvalidProtocolResource:
-    ...
+class InvalidProtocolResource: ...
 
 
 class ResourceClassProxy(core_base.BaseClassProxy[ResourceProtocol]):

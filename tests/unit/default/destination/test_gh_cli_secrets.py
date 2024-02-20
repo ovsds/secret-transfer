@@ -17,8 +17,7 @@ TEST_REPO_URL = f"https://github.com/{TEST_ORGANIZATION_NAME}/{TEST_REPO_NAME}"
 def fixture_gh_mock(mocker: pytest_mock.MockFixture) -> test_utils.Mock:
     gh_mock = mocker.patch("secret_transfer.utils.cli.GH")
 
-    class KeyNotFoundError(Exception):
-        ...
+    class KeyNotFoundError(Exception): ...
 
     gh_mock.secret.KeyNotFoundError = KeyNotFoundError
 

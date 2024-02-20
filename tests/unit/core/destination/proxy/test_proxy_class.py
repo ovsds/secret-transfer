@@ -9,8 +9,7 @@ class Destination(core.AbstractDestination):
     __register__ = False
 
 
-class InvalidDestination:
-    ...
+class InvalidDestination: ...
 
 
 class TestDestinationClassProxy(test_suite.ClassProxySuite[protocol.DestinationProtocol]):

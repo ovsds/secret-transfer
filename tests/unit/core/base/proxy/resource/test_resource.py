@@ -11,8 +11,7 @@ import tests.unit.core.base.proxy.resource.suite as test_suite
 
 @typing.runtime_checkable
 class ResourceProtocol(protocol.BaseResourceProtocol, typing.Protocol):
-    def test_method(self) -> None:
-        ...
+    def test_method(self) -> None: ...
 
 
 class Resource(core_base.BaseResource):
@@ -23,8 +22,7 @@ class Resource(core_base.BaseResource):
 ResourceSettings = core_base.ResourceSettings[ResourceProtocol]
 
 
-class ResourceProxy(core_base.BaseResourceProxy[ResourceProtocol]):
-    ...
+class ResourceProxy(core_base.BaseResourceProxy[ResourceProtocol]): ...
 
 
 class TestResourceProxy(test_suite.ResourceProxySuite[ResourceProtocol]):

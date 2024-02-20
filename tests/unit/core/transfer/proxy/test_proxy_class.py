@@ -9,8 +9,7 @@ class Transfer(core.AbstractTransfer):
     __register__ = False
 
 
-class InvalidTransfer:
-    ...
+class InvalidTransfer: ...
 
 
 class TestTransferClassProxy(test_suite.ClassProxySuite[protocol.TransferProtocol]):

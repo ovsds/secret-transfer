@@ -9,8 +9,7 @@ class Collection(core.AbstractCollection):
     __register__ = False
 
 
-class InvalidCollection:
-    ...
+class InvalidCollection: ...
 
 
 class TestCollectionClassProxy(test_suite.ClassProxySuite[protocol.CollectionProtocol]):

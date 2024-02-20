@@ -9,5 +9,4 @@ class TransferClassProxy(core_base.BaseClassProxy[protocol.TransferProtocol]):
     _proxy_protocol = protocol.TransferProtocol
 
 
-class TransferProxy(core_base.BaseResourceProxy[protocol.TransferProtocol]):
-    ...
+class TransferProxy(core_base.BaseResourceProxy[protocol.TransferProtocol]): ...
