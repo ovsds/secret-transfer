@@ -54,7 +54,7 @@ tasks:
     cmds:
       - echo 'Installing node version...'
       - task: _with_nvm
-        vars: { COMMAND: "nvm install" }
+        vars: { COMMAND: "nvm clean-install" }
       - echo ''
 
       - echo 'Installing node dependencies...'

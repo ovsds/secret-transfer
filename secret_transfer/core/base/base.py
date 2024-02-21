@@ -1,3 +1,4 @@
+import abc
 import typing
 
 import typing_extensions
@@ -16,3 +17,6 @@ class BaseResource:
     @classmethod
     def get_default_instances(cls) -> typing.Mapping[str, typing_extensions.Self]:
         return {}
+
+    @abc.abstractmethod
+    def register(self, name: str) -> None: ...
