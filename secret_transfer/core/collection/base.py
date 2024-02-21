@@ -18,6 +18,9 @@ class AbstractCollection(core_base.BaseResource, metaclass=CollectionRegistry):
     BaseError = protocol.CollectionProtocol.BaseError
     KeyNotFoundError = protocol.CollectionProtocol.KeyNotFoundError
 
+    def register(self, name: str) -> None:
+        CollectionRegistry.register_instance(name, self)
+
     @abc.abstractmethod
     def __getitem__(self, key: str) -> utils_types.Literal: ...
 

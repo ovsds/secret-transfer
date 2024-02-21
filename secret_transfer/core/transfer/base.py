@@ -19,6 +19,9 @@ class AbstractTransfer(core_base.BaseResource, metaclass=TransferRegistry):
     DestinationNotFoundError = protocol.TransferProtocol.DestinationNotFoundError
     CollectionError = protocol.TransferProtocol.CollectionError
 
+    def register(self, name: str) -> None:
+        TransferRegistry.register_instance(name, self)
+
     @abc.abstractmethod
     def run(self) -> None: ...
 
