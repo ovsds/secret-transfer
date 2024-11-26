@@ -292,7 +292,6 @@ tasks:
     vars:
       TEMPLATE_PATH: '{{.TEMPLATE_PATH | default "https://github.com/ovsds/template-repository"}}'
 
-
   # CI tasks
 
   ci-package-build:
