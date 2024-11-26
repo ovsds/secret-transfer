@@ -48,9 +48,6 @@ tasks:
 
   init:
     desc: Initialize project environment
-    vars:
-      POETRY_TARGET_VERSION:
-        sh: cat .poetry-version
     cmds:
       - echo 'Installing node dependencies...'
       - task: _with_nvm
@@ -60,14 +57,6 @@ tasks:
       - echo 'Installing husky pre-commit...'
       - task: _with_nvm
         vars: { COMMAND: "npm run prepare" }
-      - echo ''
-
-      - echo 'Installing python version...'
-      - pyenv install --skip-existing
-      - echo ''
-
-      - echo 'Installing poetry version...'
-      - poetry self update {{.POETRY_TARGET_VERSION}}
       - echo ''
 
       - echo 'Installing python dependencies...'
