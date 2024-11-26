@@ -27,7 +27,7 @@ tasks:
   _with_nvm:
     internal: true
     cmds:
-      - "source ${HOME}/.nvm/nvm.sh && nvm use && {{.COMMAND}}"
+      - "source ${HOME}/.nvm/nvm.sh && nvm install && {{.COMMAND}}"
 
   _python:
     internal: true
@@ -48,15 +48,7 @@ tasks:
 
   init:
     desc: Initialize project environment
-    vars:
-      POETRY_TARGET_VERSION:
-        sh: cat .poetry-version
     cmds:
-      - echo 'Installing node version...'
-      - task: _with_nvm
-        vars: { COMMAND: "nvm clean-install" }
-      - echo ''
-
       - echo 'Installing node dependencies...'
       - task: _with_nvm
         vars: { COMMAND: "npm install" }
@@ -64,15 +56,7 @@ tasks:
 
       - echo 'Installing husky pre-commit...'
       - task: _with_nvm
-        vars: { COMMAND: "npm run prepare-husky" }
-      - echo ''
-
-      - echo 'Installing python version...'
-      - pyenv install --skip-existing
-      - echo ''
-
-      - echo 'Installing poetry version...'
-      - poetry self update {{.POETRY_TARGET_VERSION}}
+        vars: { COMMAND: "npm run prepare" }
       - echo ''
 
       - echo 'Installing python dependencies...'
@@ -152,6 +136,7 @@ tasks:
   test:
     desc: Test project
     cmds:
+      - echo 'Running tests...'
       - task: _python
         vars: { COMMAND: "-m pytest tests" }
 
@@ -288,17 +273,26 @@ tasks:
       - echo 'Checking python dependencies...'
       - poetry show --outdated
 
-  # CI tasks
-
-  ci-init:
-    desc: Initialize project environment (CI-specific)
+  update-from-template:
+    desc: Update project from template
     cmds:
-      - echo 'Installing node dependencies...'
-      - npm clean-install
-      - echo ''
+      - echo 'Updating project from template...'
+      - cookiecutter
+        --no-input
+        --overwrite-if-exists
+        --output-dir ../
+        {{.TEMPLATE_PATH}}
+        project_name='Secret Transfer'
+        project_slug='secret-transfer'
+        node_version='v21.5.0'
+        owner_name='Dmitry Ovsiannikov'
+        owner_github_login='ovsds'
+        scripts='false'
+        services=''
+    vars:
+      TEMPLATE_PATH: '{{.TEMPLATE_PATH | default "https://github.com/ovsds/template-repository"}}'
 
-      - echo 'Installing python dependencies...'
-      - poetry install
+  # CI tasks
 
   ci-package-build:
     desc: Build package (CI-specific)
