@@ -1,5 +1,7 @@
 # Secret Transfer
 
+[![CI](https://github.com/ovsds/secret-transfer/workflows/Check%20PR/badge.svg)](https://github.com/ovsds/secret-transfer/actions?query=workflow%3A%22%22Check+PR%22%22)
+
 YaML-based secret manager for secret load/transfer from different sources to destinations.
 
 ## Base idea
@@ -450,6 +452,15 @@ Check [examples](examples/README.md) for usage examples.
 
 ## Development
 
+### Global dependencies
+
+- [Taskfile](https://taskfile.dev/installation/)
+- [nvm](https://github.com/nvm-sh/nvm?tab=readme-ov-file#install--update-script)
+
 ### Taskfile commands
 
 For all commands see [Taskfile](Taskfile.yaml) or `task --list-all`.
+
+## License
+
+[MIT](LICENSE)

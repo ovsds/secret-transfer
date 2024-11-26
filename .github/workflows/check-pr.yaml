@@ -10,7 +10,7 @@ on:
 jobs:
   check-pr-specific-python-version:
     name: Check PR for python ${{ matrix.python_version }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     permissions:
       contents: read
@@ -23,23 +23,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Task
-        uses: arduino/setup-task@v1
-        with:
-          version: 3.33.1
-
-      - name: Set up Python ${{ matrix.python_version }}
-        uses: actions/setup-python@v4
+      - name: Setup Environment
+        uses: ./.github/actions/setup_environment
         with:
           python-version: ${{ matrix.python_version }}
 
-      - name: Install and configure Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: 1.7.1
-
-      - name: Install dependencies
-        run: task ci-init
+      - name: Install Dependencies
+        run: task init
 
       - name: Lint PR
         run: task lint
@@ -53,16 +43,15 @@ jobs:
       - name: Test E2E
         run: task test-e2e
 
-  results:
-    name: Final Results
-    runs-on: ubuntu-22.04
+  check-pr:
+    runs-on: ubuntu-latest
+    if: always() && !cancelled()
 
-    needs: [check-pr-specific-python-version]
-    if: ${{ always() }}
+    needs:
+      - check-pr-specific-python-version
 
     steps:
-      - run: |
-          result="${{ needs.check-pr-specific-python-version.result }}"
-          [[ $result != "success" && $result != "skipped" ]] && exit 1
-
-          echo "All checks passed!"
+      - name: Collect Result
+        uses: ovsds/collect-needs-result-action@v1
+        with:
+          needs_json: ${{ toJson(needs) }}

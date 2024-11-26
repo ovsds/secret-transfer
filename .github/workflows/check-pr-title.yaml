@@ -1,0 +1,22 @@
+name: Check PR Title
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - edited
+
+jobs:
+  check-pr-title:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Commitlint PR Title
+        uses: ovsds/commitlint-pr-title-action@v1
+        with:
+          config_file: ./commitlint.config.js
