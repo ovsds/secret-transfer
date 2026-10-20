@@ -165,3 +165,48 @@ run = [
   "echo 'Syncing package-lock.json with the updated package.json...'",
   "npm install",
 ]
+
+[tasks.test-unit]
+description = "Run unit tests"
+run = "poetry run python -m pytest tests/unit"
+
+[tasks.test-integration]
+description = "Run integration tests"
+run = "poetry run python -m pytest tests/integration"
+
+[tasks.test-external]
+description = "Run external tests"
+run = "poetry run python -m pytest tests/external"
+
+[tasks.test-e2e]
+description = "Run end-to-end tests"
+run = "poetry run python -m pytest -vvv tests/e2e"
+
+[tasks.test-coverage]
+description = "Collect test coverage data"
+run = "poetry run python -m coverage run -m pytest tests/unit tests/integration"
+
+[tasks.test-coverage-report]
+description = "Show coverage report in console"
+run = "poetry run python -m coverage report --skip-covered --show-missing"
+
+[tasks.test-coverage-html]
+description = "Prepare and show coverage report in browser"
+run = [
+  "poetry run python -m coverage html",
+  'poetry run python -m webbrowser -t "file://${PWD}/htmlcov/index.html"',
+]
+
+[tasks.ci-package-build]
+description = "Build package (CI-specific)"
+run = [
+  "echo 'Building package...'",
+  "poetry build --no-interaction",
+]
+
+[tasks.ci-package-publish]
+description = "Publish package (CI-specific)"
+run = [
+  "echo 'Uploading package...'",
+  "poetry publish --no-interaction",
+]

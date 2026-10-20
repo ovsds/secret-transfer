@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-#MISE description="Prepare and show coverage report in browser"
-set -euo pipefail
-
-poetry run python -m coverage html
-poetry run python -m webbrowser -t "file://${PWD}/htmlcov/index.html"

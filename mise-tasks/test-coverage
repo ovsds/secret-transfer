@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-#MISE description="Collect test coverage data"
-set -euo pipefail
-
-poetry run python -m coverage run -m pytest tests/unit tests/integration

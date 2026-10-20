@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-#MISE description="Run unit tests"
-set -euo pipefail
-
-poetry run python -m pytest tests/unit
