@@ -7,7 +7,7 @@ class RegistrationMeta(type):
     def __init__(cls, name: str, bases: tuple[type, ...], attrs: dict[str, typing.Any]):
         cls.classes: dict[str, type] = {}
         cls.instances: dict[str, typing.Any] = {}
-        cls.default_class: typing.Any | None = None
+        cls.default_class: typing.Any = None
 
 
 class BaseRegistry(type, typing.Generic[protocol.ResourceType], metaclass=RegistrationMeta):

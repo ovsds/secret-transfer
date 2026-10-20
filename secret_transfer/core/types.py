@@ -8,9 +8,7 @@ import secret_transfer.utils.types as utils_types
 BaseRawArgumentType = utils_types.Literal
 
 
-RawArgumentType = (
-    utils_types.Literal | typing.Mapping[str, "BaseRawArgumentType"] | typing.Sequence["BaseRawArgumentType"]
-)
+RawArgumentType = BaseRawArgumentType | typing.Mapping[str, BaseRawArgumentType] | typing.Sequence[BaseRawArgumentType]
 
 
 class Proxy(lazy_object_proxy.Proxy):  # pyright: ignore[reportUntypedBaseClass]

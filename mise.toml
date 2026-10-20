@@ -9,6 +9,10 @@ python = "3.15.0"
 [settings]
 task.quiet = true
 
+[vars]
+python_folders = "secret_transfer tests examples"
+toml_files = "pyproject.toml poetry.toml"
+
 [tasks.init]
 description = "Initialize project environment"
 run = [
@@ -38,13 +42,13 @@ run = [
   "poetry run python -m black --check .",
 
   "echo 'Running toml-sort checks...'",
-  "poetry run toml-sort --check pyproject.toml poetry.toml",
+  "poetry run toml-sort --check {{vars.toml_files}}",
 
   "echo 'Running sort-all checks...'",
-  "poetry run sort-all $(find secret_transfer tests examples -name '*.py')",
+  "poetry run sort-all $(find {{vars.python_folders}} -name '*.py')",
 
   "echo 'Running ruff checks...'",
-  "poetry run python -m ruff check secret_transfer tests examples",
+  "poetry run python -m ruff check {{vars.python_folders}}",
 
   "echo 'Running pyright checks...'",
   "npx --no -- pyright",
@@ -63,13 +67,13 @@ run = [
   "poetry run python -m black --safe .",
 
   "echo 'Running toml-sort autofixes...'",
-  "poetry run toml-sort --in-place pyproject.toml poetry.toml",
+  "poetry run toml-sort --in-place {{vars.toml_files}}",
 
   "echo 'Running sort-all autofixes...'",
-  "poetry run sort-all $(find secret_transfer tests examples -name '*.py') || true",
+  "poetry run sort-all $(find {{vars.python_folders}} -name '*.py') || true",
 
   "echo 'Running ruff fixes...'",
-  "poetry run python -m ruff check --fix secret_transfer tests examples",
+  "poetry run python -m ruff check --fix {{vars.python_folders}}",
 
   "echo 'Running pyright checks...'",
   "npx --no -- pyright",

@@ -85,7 +85,6 @@ extend-select = [
 ignore = [
   "PLR0402", # manual-from-import, conflicts with `import a.b.c as c` module imports
   "RUF022", # unsorted-dunder-all, conflicts with sort-all ordering
-  "TRY004", # type-check-without-type-error, keeps ValueError of the public validation API
 ]
 
 [tool.tomlsort]
