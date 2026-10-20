@@ -16,14 +16,14 @@ class DefaultCollectionItem:
     @classmethod
     def from_init_arguments(cls, data: core.InitArgumentType) -> typing_extensions.Self:
         if not isinstance(data, typing.Mapping):
-            raise TypeError("Should be a mapping.")
+            raise ValueError("Should be a mapping.")
 
         source = data.get("source")
         if source is None:
             raise ValueError("Should have a source.")
 
         if not isinstance(source, protocol.SourceProtocol):
-            raise TypeError("Should have a source of type SourceProtocol.")
+            raise ValueError("Should have a source of type SourceProtocol.")
 
         key = data.get("key")
         if key is not None and not isinstance(key, str):
@@ -45,7 +45,7 @@ class DefaultCollection(core.AbstractCollection):
         for key, value in items.items():
             try:
                 result[key] = DefaultCollectionItem.from_init_arguments(value)
-            except (TypeError, ValueError) as exc:
+            except ValueError as exc:
                 raise cls.ValidationError(f"Error parsing item {key}: {exc}") from exc
 
         return result
