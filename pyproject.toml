@@ -82,6 +82,10 @@ extend-select = [
   "I", # isort
   "UP", # pyupgrade
 ]
+ignore = [
+  "PLR0402", # manual-from-import, conflicts with `import a.b.c as c` module imports
+  "RUF022", # unsorted-dunder-all, conflicts with sort-all ordering
+]
 
 [tool.tomlsort]
 all = true
