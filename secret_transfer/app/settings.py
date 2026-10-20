@@ -48,13 +48,13 @@ class TransferClassSettings(ClassSettings[protocol.TransferProtocol]):
 
 
 class ResourceSettings(pydantic_utils.BaseModel, typing.Generic[protocol.ResourceType]):
-    class_name: typing.Optional[str] = None
+    class_name: str | None = None
     init_args: dict[str, typing.Any] = pydantic.Field(default_factory=dict)
 
     def to_proxy_settings(
         self,
         resource_classes: typing.Mapping[str, type[protocol.ResourceType]],
-        default_resource_class: typing.Optional[type[protocol.ResourceType]],
+        default_resource_class: type[protocol.ResourceType] | None,
         resources: typing.Mapping[str, typing.Mapping[str, protocol.BaseResourceProtocol]],
     ) -> core_base.ResourceSettings[protocol.ResourceType]:
         return self._proxy_settings_class(

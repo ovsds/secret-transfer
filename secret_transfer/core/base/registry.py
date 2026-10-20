@@ -7,7 +7,7 @@ class RegistrationMeta(type):
     def __init__(cls, name: str, bases: tuple[type, ...], attrs: dict[str, typing.Any]):
         cls.classes: dict[str, type] = {}
         cls.instances: dict[str, typing.Any] = {}
-        cls.default_class: typing.Optional[typing.Any] = None
+        cls.default_class: typing.Any | None = None
 
 
 class BaseRegistry(type, typing.Generic[protocol.ResourceType], metaclass=RegistrationMeta):
@@ -21,7 +21,7 @@ class BaseRegistry(type, typing.Generic[protocol.ResourceType], metaclass=Regist
 
     classes: dict[str, type[protocol.ResourceType]]
     instances: dict[str, protocol.ResourceType]
-    default_class: typing.Optional[type[protocol.ResourceType]]
+    default_class: type[protocol.ResourceType] | None
 
     def __init__(
         cls,
@@ -35,11 +35,11 @@ class BaseRegistry(type, typing.Generic[protocol.ResourceType], metaclass=Regist
         if "__register__" not in attrs or attrs["__register__"]:
             cls.register_class(name, cls)  # pyright: ignore[reportAttributeAccessIssue]
 
-        if "__default__" in attrs and attrs["__default__"]:
+        if attrs.get("__default__"):
             cls.register_default_class(cls)  # pyright: ignore[reportAttributeAccessIssue]
 
-        for name, instance in cls.get_default_instances().items():
-            cls.register_instance(name, instance)  # pyright: ignore[reportAttributeAccessIssue]
+        for instance_name, instance in cls.get_default_instances().items():
+            cls.register_instance(instance_name, instance)  # pyright: ignore[reportAttributeAccessIssue]
 
     @classmethod
     def register_class(cls, name: str, class_: type[protocol.ResourceType]) -> None:

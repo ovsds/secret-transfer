@@ -116,7 +116,7 @@ def test_proxy_resource_argument(mocker: pytest_mock.MockFixture):
     source.__getitem__.assert_not_called()
 
     proxy.test_method()
-    test_class.parse_init_arguments.assert_called_once_with(**{"raw": "source_value"})
+    test_class.parse_init_arguments.assert_called_once_with(raw="source_value")
     test_class.assert_called_once_with(**parsed_arguments)
 
 
@@ -148,7 +148,7 @@ def test_proxy_resource_argument_proxy(mocker: pytest_mock.MockFixture):
 
     source._could_be_called = True
     proxy.test_method()
-    test_class.parse_init_arguments.assert_called_once_with(**{"raw": "source_value"})
+    test_class.parse_init_arguments.assert_called_once_with(raw="source_value")
     test_class.assert_called_once_with(**parsed_arguments)
 
 
@@ -181,7 +181,7 @@ def test_proxy_resource_argument_nested(mocker: pytest_mock.MockFixture):
     source2.__getitem__.assert_called_once_with("source2_key")
     source3.__getitem__.assert_called_once_with("source3_key")
 
-    test_class.parse_init_arguments.assert_called_once_with(**{"raw": "source_value"})
+    test_class.parse_init_arguments.assert_called_once_with(raw="source_value")
     test_class.assert_called_once_with(**parsed_arguments)
 
 
@@ -206,7 +206,7 @@ def test_proxy_resource_argument_resource(mocker: pytest_mock.MockFixture):
     source.__getitem__.assert_not_called()
 
     proxy.test_method()
-    test_class.parse_init_arguments.assert_called_once_with(**{"raw": source})
+    test_class.parse_init_arguments.assert_called_once_with(raw=source)
     test_class.assert_called_once_with(**parsed_arguments)
 
 
@@ -283,7 +283,7 @@ def test_proxy_resource_argument_resource_error(mocker: pytest_mock.MockFixture)
 
     # raises on assert_called_once_with due to lazy evaluation
     with pytest.raises(ResourceProxy.ResourceError):
-        test_class.parse_init_arguments.assert_called_once_with(**{"raw": "source_value"})
+        test_class.parse_init_arguments.assert_called_once_with(raw="source_value")
     test_class.assert_called_once_with(**parsed_arguments)
 
 

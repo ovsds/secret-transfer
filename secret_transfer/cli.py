@@ -1,5 +1,4 @@
 import os.path
-import typing
 
 import click
 import pydantic
@@ -56,7 +55,7 @@ def main():
     type=str,
     default=None,
 )
-def run(file_path: str, name: typing.Optional[str] = None):
+def run(file_path: str, name: str | None = None):
     application = get_application(file_path=file_path)
 
     if name is not None:
@@ -83,7 +82,7 @@ def run(file_path: str, name: typing.Optional[str] = None):
     type=str,
     default=None,
 )
-def clean(file_path: str, name: typing.Optional[str] = None):
+def clean(file_path: str, name: str | None = None):
     application = get_application(file_path=file_path)
 
     if name is not None:

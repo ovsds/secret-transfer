@@ -16,13 +16,13 @@ class ResourceClassSettings(typing.Generic[protocol.ResourceType]):
 @dataclasses.dataclass
 class ResourceSettings(typing.Generic[protocol.ResourceType]):
     resource_classes: typing.Mapping[str, type[protocol.ResourceType]]
-    default_resource_class: typing.Optional[type[protocol.ResourceType]] = None
+    default_resource_class: type[protocol.ResourceType] | None = None
     resources: typing.Mapping[str, typing.Mapping[str, protocol.BaseResourceProtocol]] = dataclasses.field(
-        default_factory=dict
+        default_factory=dict[str, typing.Mapping[str, protocol.BaseResourceProtocol]]
     )
 
-    class_name: typing.Optional[str] = None
-    raw_arguments: typing.Mapping[str, typing.Any] = dataclasses.field(default_factory=dict)
+    class_name: str | None = None
+    raw_arguments: typing.Mapping[str, typing.Any] = dataclasses.field(default_factory=dict[str, typing.Any])
 
 
 class BaseClassProxy(typing.Generic[protocol.ResourceType]):
@@ -69,7 +69,7 @@ class GettableResourceProtocol(typing.Protocol):
 class ResourceArgument:
     type: str
     name: str
-    key: typing.Optional[str] = None
+    key: str | None = None
 
 
 class ParseResourceArgumentError(Exception): ...

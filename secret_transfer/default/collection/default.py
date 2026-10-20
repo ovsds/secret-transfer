@@ -11,19 +11,19 @@ import secret_transfer.utils.types as utils_types
 @dataclasses.dataclass
 class DefaultCollectionItem:
     source: protocol.SourceProtocol
-    key: typing.Optional[str] = None
+    key: str | None = None
 
     @classmethod
     def from_init_arguments(cls, data: core.InitArgumentType) -> typing_extensions.Self:
         if not isinstance(data, typing.Mapping):
-            raise ValueError("Should be a mapping.")
+            raise TypeError("Should be a mapping.")
 
         source = data.get("source")
         if source is None:
             raise ValueError("Should have a source.")
 
         if not isinstance(source, protocol.SourceProtocol):
-            raise ValueError("Should have a source of type SourceProtocol.")
+            raise TypeError("Should have a source of type SourceProtocol.")
 
         key = data.get("key")
         if key is not None and not isinstance(key, str):
@@ -45,7 +45,7 @@ class DefaultCollection(core.AbstractCollection):
         for key, value in items.items():
             try:
                 result[key] = DefaultCollectionItem.from_init_arguments(value)
-            except ValueError as exc:
+            except (TypeError, ValueError) as exc:
                 raise cls.ValidationError(f"Error parsing item {key}: {exc}") from exc
 
         return result

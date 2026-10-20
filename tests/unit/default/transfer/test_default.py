@@ -24,10 +24,7 @@ def test_parse_init_arguments():
     test_destination = test_utils.MagicMock(spec=protocol.DestinationProtocol)
 
     arguments = secret_transfer.DefaultTransfer.parse_init_arguments(
-        **{
-            "collection": test_collection,
-            "destination": test_destination,
-        }
+        collection=test_collection, destination=test_destination
     )
 
     assert arguments == {

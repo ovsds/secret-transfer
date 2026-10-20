@@ -9,7 +9,7 @@ import secret_transfer.utils.types as utils_types
 class CollectionRegistry(core_base.BaseRegistry[protocol.CollectionProtocol]):
     classes: dict[str, type[protocol.CollectionProtocol]]
     instances: dict[str, protocol.CollectionProtocol]
-    default_class: typing.Optional[type[protocol.CollectionProtocol]]
+    default_class: type[protocol.CollectionProtocol] | None
 
 
 class AbstractCollection(core_base.BaseResource, metaclass=CollectionRegistry):

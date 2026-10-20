@@ -1,5 +1,4 @@
 import abc
-import typing
 
 import secret_transfer.core.base as core_base
 import secret_transfer.protocol as protocol
@@ -9,7 +8,7 @@ import secret_transfer.utils.types as utils_types
 class SourceRegistry(core_base.BaseRegistry[protocol.SourceProtocol]):
     classes: dict[str, type[protocol.SourceProtocol]]
     instances: dict[str, protocol.SourceProtocol]
-    default_class: typing.Optional[type[protocol.SourceProtocol]]
+    default_class: type[protocol.SourceProtocol] | None
 
 
 class AbstractSource(core_base.BaseResource, metaclass=SourceRegistry):

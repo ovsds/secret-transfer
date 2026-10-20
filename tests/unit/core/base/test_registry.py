@@ -12,7 +12,7 @@ class ResourceTestProtocol(typing.Protocol): ...
 class Registry(core_base.BaseRegistry[ResourceTestProtocol]):  # pyright: ignore[reportInvalidTypeArguments]
     classes: dict[str, type[ResourceTestProtocol]]
     instances: dict[str, ResourceTestProtocol]
-    default_class: typing.Optional[type[ResourceTestProtocol]]
+    default_class: type[ResourceTestProtocol] | None
 
 
 RegistryType = type[Registry]
@@ -79,7 +79,7 @@ def test_class_name_collision(registry1: RegistryType):
 
     with pytest.raises(ValueError):
 
-        class Class1(ClassBase, metaclass=registry1):  # noqa: F811 # pyright: ignore[reportUnusedClass]
+        class Class1(ClassBase, metaclass=registry1):  # pyright: ignore[reportUnusedClass]
             __register__ = True
 
 

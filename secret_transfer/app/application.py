@@ -20,20 +20,26 @@ TransfersType = typing.MutableMapping[str, protocol.TransferProtocol]
 
 @dataclasses.dataclass
 class ApplicationResources:
-    source_classes: SourceClassesType = dataclasses.field(default_factory=dict)
-    destination_classes: DestinationClassesType = dataclasses.field(default_factory=dict)
-    collection_classes: CollectionClassesType = dataclasses.field(default_factory=dict)
-    transfer_classes: TransferClassesType = dataclasses.field(default_factory=dict)
+    source_classes: SourceClassesType = dataclasses.field(default_factory=dict[str, type[protocol.SourceProtocol]])
+    destination_classes: DestinationClassesType = dataclasses.field(
+        default_factory=dict[str, type[protocol.DestinationProtocol]]
+    )
+    collection_classes: CollectionClassesType = dataclasses.field(
+        default_factory=dict[str, type[protocol.CollectionProtocol]]
+    )
+    transfer_classes: TransferClassesType = dataclasses.field(
+        default_factory=dict[str, type[protocol.TransferProtocol]]
+    )
 
-    default_source_class: typing.Optional[type[protocol.SourceProtocol]] = None
-    default_destination_class: typing.Optional[type[protocol.DestinationProtocol]] = None
-    default_collection_class: typing.Optional[type[protocol.CollectionProtocol]] = None
-    default_transfer_class: typing.Optional[type[protocol.TransferProtocol]] = None
+    default_source_class: type[protocol.SourceProtocol] | None = None
+    default_destination_class: type[protocol.DestinationProtocol] | None = None
+    default_collection_class: type[protocol.CollectionProtocol] | None = None
+    default_transfer_class: type[protocol.TransferProtocol] | None = None
 
-    sources: SourcesType = dataclasses.field(default_factory=dict)
-    destinations: DestinationsType = dataclasses.field(default_factory=dict)
-    collections: CollectionsType = dataclasses.field(default_factory=dict)
-    transfers: TransfersType = dataclasses.field(default_factory=dict)
+    sources: SourcesType = dataclasses.field(default_factory=dict[str, protocol.SourceProtocol])
+    destinations: DestinationsType = dataclasses.field(default_factory=dict[str, protocol.DestinationProtocol])
+    collections: CollectionsType = dataclasses.field(default_factory=dict[str, protocol.CollectionProtocol])
+    transfers: TransfersType = dataclasses.field(default_factory=dict[str, protocol.TransferProtocol])
 
     @classmethod
     def from_registry(cls):
