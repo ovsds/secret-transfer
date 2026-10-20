@@ -14,9 +14,9 @@ Commands:
 def test_empty():
     result = common.run("secret-transfer")
 
-    assert result.exit_code == 0
-    assert result.stdout == HELP_MESSAGE
-    assert result.stderr == ""
+    assert result.exit_code == 2
+    assert result.stdout == ""
+    assert result.stderr == HELP_MESSAGE
 
 
 def test_help():
