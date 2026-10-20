@@ -1,5 +1,3 @@
-import typing
-
 import pydantic
 import pytest
 
@@ -25,7 +23,7 @@ def test_pydantic_from_yaml_invalid_format():
 
 def test_pydantic_from_yaml_empty():
     class Model(pydantic_utils.BaseModel):
-        test_key: typing.Optional[str] = None
+        test_key: str | None = None
 
     model = Model.from_yaml(raw="")
 

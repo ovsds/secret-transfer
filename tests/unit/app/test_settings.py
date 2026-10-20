@@ -7,8 +7,7 @@ def test_from_yaml_empty():
 
 
 def test_from_yaml():
-    settings = secret_transfer.ApplicationSettings.from_yaml(
-        """
+    settings = secret_transfer.ApplicationSettings.from_yaml("""
         source_classes:
           TestSource:
             module: test_source_module
@@ -52,8 +51,7 @@ def test_from_yaml():
             class_name: TestTransfer
             init_args:
               test_arg: test_value
-        """
-    )
+        """)
 
     assert settings.source_classes == {
         "TestSource": secret_transfer.SourceClassSettings(
@@ -121,8 +119,7 @@ def test_from_yaml():
 
 
 def test_from_yaml_resource_init_args():
-    settings = secret_transfer.ApplicationSettings.from_yaml(
-        """
+    settings = secret_transfer.ApplicationSettings.from_yaml("""
         sources:
           TestSource:
             class_name: TestSource
@@ -136,8 +133,7 @@ def test_from_yaml_resource_init_args():
                 - value2
               dict_arg:
                 test_key: test_value
-        """
-    )
+        """)
 
     assert settings.sources == {
         "TestSource": secret_transfer.SourceSettings(

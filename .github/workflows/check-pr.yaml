@@ -7,6 +7,10 @@ on:
       - reopened
       - synchronize
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}
+  cancel-in-progress: true
+
 jobs:
   check-pr-specific-python-version:
     name: Check PR for python ${{ matrix.python_version }}
@@ -17,41 +21,51 @@ jobs:
 
     strategy:
       matrix:
-        python_version: ["3.9", "3.10", "3.11", "3.12"]
+        python_version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
+
+    env:
+      MISE_PYTHON_VERSION: ${{ matrix.python_version }}
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Environment
-        uses: ./.github/actions/setup_environment
-        with:
-          python-version: ${{ matrix.python_version }}
+        uses: $/.github/actions/setup_environment
 
       - name: Install Dependencies
-        run: task init
+        run: |
+          mise run init
 
       - name: Lint PR
-        run: task lint
+        run: |
+          mise run lint
 
       - name: Test Unit
-        run: task test-unit
+        run: |
+          mise run test-unit
 
       - name: Test Integration
-        run: task test-integration
+        run: |
+          mise run test-integration
 
       - name: Test E2E
-        run: task test-e2e
+        run: |
+          mise run test-e2e
 
   check-pr:
     runs-on: ubuntu-latest
     if: always() && !cancelled()
+
+    permissions: {}
 
     needs:
       - check-pr-specific-python-version
 
     steps:
       - name: Collect Result
-        uses: ovsds/collect-needs-result-action@v1
+        uses: ovsds/collect-needs-result-action@12190e2a1bfe85d9c024f190a3833973e97998f8 # v1.0.0
         with:
           needs_json: ${{ toJson(needs) }}

@@ -1,5 +1,4 @@
 import os.path
-import typing
 
 import click
 import pydantic
@@ -33,9 +32,12 @@ def get_application(file_path: str) -> app.Application:
     return app.Application.from_settings(settings=settings)
 
 
-@click.group()
-def main():
-    pass
+@click.group(invoke_without_command=True, subcommand_metavar="COMMAND [ARGS]...")
+@click.pass_context
+def main(ctx: click.Context):
+    # click 8.2+ exits with 2 on a group without a command; keep printing the help with 0
+    if ctx.invoked_subcommand is None:
+        click.echo(ctx.get_help())
 
 
 @main.command(
@@ -56,7 +58,7 @@ def main():
     type=str,
     default=None,
 )
-def run(file_path: str, name: typing.Optional[str] = None):
+def run(file_path: str, name: str | None = None):
     application = get_application(file_path=file_path)
 
     if name is not None:
@@ -83,7 +85,7 @@ def run(file_path: str, name: typing.Optional[str] = None):
     type=str,
     default=None,
 )
-def clean(file_path: str, name: typing.Optional[str] = None):
+def clean(file_path: str, name: str | None = None):
     application = get_application(file_path=file_path)
 
     if name is not None:

@@ -1,0 +1,212 @@
+min_version = "2026.10.3"
+
+[tools]
+node = "26.12.0"
+uv = "0.13.1"
+python = "3.15.0"
+"pypi:poetry" = "2.5.1"
+
+[settings]
+task.quiet = true
+
+[vars]
+python_folders = "secret_transfer tests examples"
+toml_files = "pyproject.toml poetry.toml"
+
+[tasks.init]
+description = "Initialize project environment"
+run = [
+  "echo 'Installing mise tools...'",
+  "mise install",
+
+  "echo 'Installing node dependencies...'",
+  "if [ -f package-lock.json ]; then npm ci; else npm install; fi",
+
+  "echo 'Installing husky pre-commit...'",
+  "npm run prepare",
+
+  "echo 'Installing python dependencies...'",
+  "poetry install",
+]
+
+[tasks.lint]
+description = "Lint project"
+run = [
+  "echo 'Running prettier checks...'",
+  "npx --no -- prettier --check .",
+
+  "echo 'Running poetry checks...'",
+  "poetry check --lock",
+
+  "echo 'Running black checks...'",
+  "poetry run python -m black --check .",
+
+  "echo 'Running toml-sort checks...'",
+  "poetry run toml-sort --check {{vars.toml_files}}",
+
+  "echo 'Running sort-all checks...'",
+  "poetry run sort-all $(find {{vars.python_folders}} -name '*.py')",
+
+  "echo 'Running ruff checks...'",
+  "poetry run python -m ruff check {{vars.python_folders}}",
+
+  "echo 'Running pyright checks...'",
+  "npx --no -- pyright",
+]
+
+[tasks.lint-fix]
+description = "Lint fix project"
+run = [
+  "echo 'Running prettier fixes...'",
+  "npx --no -- prettier --write .",
+
+  "echo 'Running poetry lock...'",
+  "poetry lock",
+
+  "echo 'Running black autofixes...'",
+  "poetry run python -m black --safe .",
+
+  "echo 'Running toml-sort autofixes...'",
+  "poetry run toml-sort --in-place {{vars.toml_files}}",
+
+  "echo 'Running sort-all autofixes...'",
+  "poetry run sort-all $(find {{vars.python_folders}} -name '*.py') || true",
+
+  "echo 'Running ruff fixes...'",
+  "poetry run python -m ruff check --fix {{vars.python_folders}}",
+
+  "echo 'Running pyright checks...'",
+  "npx --no -- pyright",
+]
+
+[tasks.test]
+description = "Test project"
+run = [
+  "echo 'Running tests...'",
+  "poetry run python -m pytest tests",
+]
+
+[tasks.clean]
+description = "Clean project environment"
+run = [
+  "echo 'Cleaning node dependencies...'",
+  "rm -rf node_modules",
+
+  "echo 'Cleaning python dependencies...'",
+  "rm -rf .venv",
+
+  "echo 'Cleaning dist packages...'",
+  "rm -rf dist",
+
+  "echo 'Cleaning pytest cache...'",
+  "rm -rf .pytest_cache",
+
+  "echo 'Cleaning ruff cache...'",
+  "rm -rf .ruff_cache",
+
+  "echo 'Cleaning coverage data...'",
+  "rm -rf .coverage htmlcov",
+]
+
+[tasks.dependencies-update]
+description = "Update dependencies"
+run = [
+  "echo 'Updating mise tools...'",
+  "mise upgrade --bump",
+
+  "echo 'Updating node dependencies...'",
+  "npm update",
+
+  "echo 'Updating python dependencies...'",
+  "poetry update",
+]
+
+[tasks.dependencies-check]
+description = "Check dependencies"
+run = [
+  "echo 'Checking mise tools...'",
+  "mise outdated",
+
+  "echo 'Checking node dependencies...'",
+  "npm outdated",
+  "npm audit",
+
+  "echo 'Checking python dependencies...'",
+  "poetry show --outdated",
+]
+
+[tasks.update-from-template]
+description = "Update project from template; TEMPLATE_PATH=<path> in the environment overrides the source"
+run = [
+  "echo 'Updating project from template...'",
+  '''
+  cookiecutter \
+    --no-input \
+    --overwrite-if-exists \
+    --output-dir ../ \
+    "${TEMPLATE_PATH:-https://github.com/ovsds/template-repository}" \
+    project_name='Secret Transfer' \
+    project_slug='secret-transfer' \
+    node_version='v26.12.0' \
+    github_workflow_runs_on='ubuntu-latest' \
+    owner_name='Dmitry Ovsiannikov' \
+    owner_github_login='ovsds' \
+    scripts='false' \
+    services='' \
+    with_python='true' \
+    with_cookiecutter='false' \
+    with_trivy='false' \
+    with_zizmor='false' \
+    with_gitleaks='false' \
+    with_docker='false' \
+    with_build='false'
+  ''',
+
+  "echo 'Syncing package-lock.json with the updated package.json...'",
+  "npm install",
+]
+
+[tasks.test-unit]
+description = "Run unit tests"
+run = "poetry run python -m pytest tests/unit"
+
+[tasks.test-integration]
+description = "Run integration tests"
+run = "poetry run python -m pytest tests/integration"
+
+[tasks.test-external]
+description = "Run external tests"
+run = "poetry run python -m pytest tests/external"
+
+[tasks.test-e2e]
+description = "Run end-to-end tests"
+run = "poetry run python -m pytest -vvv tests/e2e"
+
+[tasks.test-coverage]
+description = "Collect test coverage data"
+run = "poetry run python -m coverage run -m pytest tests/unit tests/integration"
+
+[tasks.test-coverage-report]
+description = "Show coverage report in console"
+run = "poetry run python -m coverage report --skip-covered --show-missing"
+
+[tasks.test-coverage-html]
+description = "Prepare and show coverage report in browser"
+run = [
+  "poetry run python -m coverage html",
+  'poetry run python -m webbrowser -t "file://${PWD}/htmlcov/index.html"',
+]
+
+[tasks.ci-package-build]
+description = "Build package (CI-specific)"
+run = [
+  "echo 'Building package...'",
+  "poetry build --no-interaction",
+]
+
+[tasks.ci-package-publish]
+description = "Publish package (CI-specific)"
+run = [
+  "echo 'Uploading package...'",
+  "poetry publish --no-interaction",
+]

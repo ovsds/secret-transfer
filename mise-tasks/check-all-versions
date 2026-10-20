@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#MISE description="Run init, lint and test with every supported Python version"
+set -euo pipefail
+
+for python_version in 3.11 3.12 3.13 3.14 3.15; do
+  mise run check-version "${python_version}"
+done
+
+echo 'Restoring the default python environment...'
+rm -rf .venv
+mise run init

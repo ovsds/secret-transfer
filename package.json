@@ -2,13 +2,12 @@
   "private": true,
   "name": "secret-transfer",
   "devDependencies": {
-    "@commitlint/cli": "^19.0.3",
-    "@commitlint/config-conventional": "^19.0.3",
-    "dockerfilelint": "1.8.0",
-    "husky": "^9.1.1",
-    "lint-staged": "^15.2.0",
-    "prettier": "^3.1.1",
-    "pyright": "^1.1.299"
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
+    "prettier": "^3.9.10",
+    "pyright": "^1.1.414"
   },
   "hooks": {
     "pre-commit": "lint-staged",
@@ -20,10 +19,10 @@
     ],
     "*.py": [
       ".venv/bin/python -m black --check",
-      ".venv/bin/python -m ruff",
+      ".venv/bin/python -m ruff check",
       "node_modules/.bin/pyright"
     ],
-    "*.toml": [
+    "{pyproject,poetry}.toml": [
       ".venv/bin/toml-sort --check"
     ]
   },

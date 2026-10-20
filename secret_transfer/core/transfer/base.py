@@ -1,5 +1,4 @@
 import abc
-import typing
 
 import secret_transfer.core.base as core_base
 import secret_transfer.protocol as protocol
@@ -8,7 +7,7 @@ import secret_transfer.protocol as protocol
 class TransferRegistry(core_base.BaseRegistry[protocol.TransferProtocol]):
     classes: dict[str, type[protocol.TransferProtocol]]
     instances: dict[str, protocol.TransferProtocol]
-    default_class: typing.Optional[type[protocol.TransferProtocol]]
+    default_class: type[protocol.TransferProtocol] | None
 
 
 class AbstractTransfer(core_base.BaseResource, metaclass=TransferRegistry):

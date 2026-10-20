@@ -122,12 +122,10 @@ def test_get_without_source_key(test_source: test_utils.MagicMock):
 
 def test_get_no_key(test_source: test_utils.MagicMock):
     collection = secret_transfer.DefaultCollection(
-        **{
-            "another_key": secret_transfer.DefaultCollectionItem(
-                source=test_source,
-                key=TEST_SOURCE_KEY,
-            ),
-        },
+        another_key=secret_transfer.DefaultCollectionItem(
+            source=test_source,
+            key=TEST_SOURCE_KEY,
+        ),
     )
 
     with pytest.raises(secret_transfer.DefaultCollection.KeyNotFoundError):
