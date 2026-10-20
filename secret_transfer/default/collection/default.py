@@ -16,7 +16,7 @@ class DefaultCollectionItem:
     @classmethod
     def from_init_arguments(cls, data: core.InitArgumentType) -> typing_extensions.Self:
         if not isinstance(data, typing.Mapping):
-            raise ValueError("Should be a mapping.")  # noqa: TRY004 # caught as ValueError by parse_init_arguments
+            raise ValueError("Should be a mapping.")  # noqa: TRY004 # public API raised ValueError before ruff 0.17
 
         source = data.get("source")
         if source is None:
