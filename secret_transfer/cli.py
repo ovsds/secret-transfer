@@ -32,9 +32,12 @@ def get_application(file_path: str) -> app.Application:
     return app.Application.from_settings(settings=settings)
 
 
-@click.group()
-def main():
-    pass
+@click.group(invoke_without_command=True, subcommand_metavar="COMMAND [ARGS]...")
+@click.pass_context
+def main(ctx: click.Context):
+    # click 8.2+ exits with 2 on a group without a command; keep printing the help with 0
+    if ctx.invoked_subcommand is None:
+        click.echo(ctx.get_help())
 
 
 @main.command(
