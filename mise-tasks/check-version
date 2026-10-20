@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#MISE description="Run init, lint and test with the given Python version"
+#USAGE arg "<python_version>" help="Python version to check, e.g. 3.11"
+set -euo pipefail
+
+export MISE_PYTHON_VERSION="${usage_python_version:?}"
+
+echo "Checking python ${MISE_PYTHON_VERSION}..."
+rm -rf .venv
+mise run init
+mise run lint
+mise run test

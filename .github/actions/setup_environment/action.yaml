@@ -2,35 +2,15 @@ name: "Setup Environment"
 description: "Setting environment for the project"
 
 inputs:
-  task-version:
-    description: "Task version"
+  mise-version:
+    description: "Mise version, tools are pinned in mise.toml"
     required: true
-    default: "3.33.1"
-
-  python-version:
-    description: "Python version"
-    required: true
-    default: "3.12"
-
-  poetry-version:
-    description: "Poetry version"
-    required: true
-    default: "1.7.1"
+    default: "2026.10.15"
 
 runs:
   using: "composite"
   steps:
-    - name: Install Task
-      uses: arduino/setup-task@v1
+    - name: Setup mise
+      uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
       with:
-        version: ${{ inputs.task-version }}
-
-    - name: Set up Python ${{ matrix.python_version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ inputs.python-version }}
-
-    - name: Install and configure Poetry
-      uses: snok/install-poetry@v1
-      with:
-        version: ${{ inputs.poetry-version }}
+        version: ${{ inputs.mise-version }}

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Run end-to-end tests"
+set -euo pipefail
+
+poetry run python -m pytest -vvv tests/e2e

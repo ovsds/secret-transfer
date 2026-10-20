@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Show coverage report in console"
+set -euo pipefail
+
+poetry run python -m coverage report --skip-covered --show-missing

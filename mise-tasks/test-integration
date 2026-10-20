@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Run integration tests"
+set -euo pipefail
+
+poetry run python -m pytest tests/integration

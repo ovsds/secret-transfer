@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#MISE description="Publish package (CI-specific)"
+set -euo pipefail
+
+echo 'Uploading package...'
+poetry publish --no-interaction
